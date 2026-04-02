@@ -96,7 +96,7 @@ public class ProcessScanTask extends RecursiveTask<List<ProcessModel>> {
 
             long residentSetSizeBytes = Math.max(0, proc.getResidentSetSize());
             double ramPercent = totalSystemMemoryBytes > 0 ? residentSetSizeBytes * 100.0 / totalSystemMemoryBytes: 0.0;
-            double cpuPercent = proc.getProcessCpuLoadCumulative() * 100.0/ Math.max(1, logicalProcessorCount);
+            double cpuPercent = proc.getProcessCpuLoadCumulative() * 100.0/ Math.max(1, logicalProcessorCount); // Mateja ispravi ovo sranje
 
             return new ProcessMetrics(processName, ramPercent, cpuPercent);
 

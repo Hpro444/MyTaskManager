@@ -16,6 +16,9 @@ import lombok.AccessLevel;
 @ToString
 public class ProcessModel {
 
+
+    //proces id
+    // creational timestamp i ostala govna
     @Getter(AccessLevel.NONE)
     private final StringProperty name;
     @Getter(AccessLevel.NONE)
