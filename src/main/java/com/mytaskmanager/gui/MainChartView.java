@@ -9,6 +9,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 
 import java.util.*;
@@ -67,6 +68,18 @@ public class MainChartView extends BorderPane {
      * Expansion state is preserved across rebuilds.
      */
     private void rebuildTree() {
+        TreeItem<ProcessModel> previousSelection = processTable.getSelectionModel().getSelectedItem();
+        int previousPid = Integer.MIN_VALUE;
+        String previousGroupName = null;
+        if (previousSelection != null && previousSelection.getValue() != null) {
+            ProcessModel selectedModel = previousSelection.getValue();
+            if (selectedModel.getPid() >= 0) {
+                previousPid = selectedModel.getPid();
+            } else if (selectedModel.getPid() == -1) {
+                previousGroupName = selectedModel.getName();
+            }
+        }
+
         // Preserve which group names are currently expanded
         Set<String> expanded = treeRoot.getChildren().stream().filter(TreeItem::isExpanded).map(item -> item.getValue().getName()).collect(Collectors.toSet());
 
@@ -105,6 +118,39 @@ public class MainChartView extends BorderPane {
         groupItems.sort(Comparator.comparingDouble((TreeItem<ProcessModel> item) -> item.getValue().getCpuUsagePercent()).reversed());
 
         treeRoot.getChildren().setAll(groupItems);
+
+        // Keep the user's current selection stable across live updates.
+        if (previousPid != Integer.MIN_VALUE || previousGroupName != null) {
+            TreeItem<ProcessModel> restored = null;
+            for (TreeItem<ProcessModel> group : treeRoot.getChildren()) {
+                ProcessModel groupModel = group.getValue();
+                if (groupModel == null) continue;
+
+                if (previousPid != Integer.MIN_VALUE) {
+                    if (groupModel.getPid() == previousPid) {
+                        restored = group;
+                        break;
+                    }
+                    for (TreeItem<ProcessModel> child : group.getChildren()) {
+                        ProcessModel childModel = child.getValue();
+                        if (childModel != null && childModel.getPid() == previousPid) {
+                            restored = child;
+                            break;
+                        }
+                    }
+                    if (restored != null) break;
+                }
+
+                if (previousGroupName != null && groupModel.getPid() == -1 && previousGroupName.equals(groupModel.getName())) {
+                    restored = group;
+                    break;
+                }
+            }
+
+            if (restored != null) {
+                processTable.getSelectionModel().select(restored);
+            }
+        }
     }
 
     private HBox buildToolBar() {
@@ -173,10 +219,53 @@ public class MainChartView extends BorderPane {
         table.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         table.setPlaceholder(new Label("Scanning..."));
 
+        // Open details only on explicit user click, never on scan-driven selection churn.
+        table.setRowFactory(tv -> {
+            TreeTableRow<ProcessModel> row = new TreeTableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getButton() != MouseButton.PRIMARY || event.getClickCount() != 1) return;
+                if (row.isEmpty()) return;
+
+                ProcessModel p = row.getItem();
+                if (p != null && p.getPid() >= 0)
+                    MainApplication.show(new ProcessDetailView(p, flatItems));
+            });
+            return row;
+        });
+
         TreeTableColumn<ProcessModel, String> nameCol = new TreeTableColumn<>("Process");
         nameCol.setCellValueFactory(d -> d.getValue().getValue().nameProperty());
         nameCol.setPrefWidth(200);
         nameCol.setSortable(false);
+
+        TreeTableColumn<ProcessModel, String> catCol = new TreeTableColumn<>("Category");
+        catCol.setCellValueFactory(d -> {
+            TreeItem<ProcessModel> item = d.getValue();
+            if (item == null || item.getValue() == null) {
+                return new javafx.beans.property.SimpleStringProperty("");
+            }
+
+            ProcessModel model = item.getValue();
+            if (model.getPid() >= 0) {
+                return new javafx.beans.property.SimpleStringProperty(model.getCategoryDisplay());
+            }
+
+            Set<Category> childCategories = item.getChildren().stream()
+                    .map(TreeItem::getValue)
+                    .filter(Objects::nonNull)
+                    .map(ProcessModel::getCategory)
+                    .collect(Collectors.toSet());
+
+            if (childCategories.isEmpty()) {
+                return new javafx.beans.property.SimpleStringProperty(Category.UNCATEGORIZED.displayName());
+            }
+            if (childCategories.size() == 1) {
+                return new javafx.beans.property.SimpleStringProperty(childCategories.iterator().next().displayName());
+            }
+            return new javafx.beans.property.SimpleStringProperty("Mixed");
+        });
+        catCol.setPrefWidth(120);
+        catCol.setSortable(false);
 
         TreeTableColumn<ProcessModel, String> cpuCol = new TreeTableColumn<>("CPU %");
         cpuCol.setCellValueFactory(d -> Bindings.createStringBinding(() -> String.format("%.1f%%", d.getValue().getValue().getCpuUsagePercent()), d.getValue().getValue().cpuUsagePercentProperty()));
@@ -188,16 +277,8 @@ public class MainChartView extends BorderPane {
         ramCol.setPrefWidth(70);
         ramCol.setSortable(false);
 
-        table.getColumns().addAll(nameCol, cpuCol, ramCol);
+        table.getColumns().addAll(nameCol, catCol, cpuCol, ramCol);
 
-        // Navigate to detail view only for real individual processes (pid >= 0)
-        table.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, selected) -> {
-            if (selected != null && selected.getValue() != null) {
-                ProcessModel p = selected.getValue();
-                if (p.getPid() >= 0)
-                    MainApplication.show(new ProcessDetailView(p, flatItems));
-            }
-        });
 
         return table;
     }
