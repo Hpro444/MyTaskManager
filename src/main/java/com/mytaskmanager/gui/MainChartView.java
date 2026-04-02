@@ -2,6 +2,7 @@ package com.mytaskmanager.gui;
 
 import com.mytaskmanager.domain.Category;
 import com.mytaskmanager.domain.ProcessModel;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -9,7 +10,6 @@ import javafx.geometry.Pos;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import lombok.Getter;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,9 +18,13 @@ import java.util.stream.Collectors;
 public class MainChartView extends BorderPane {
 
     private final ConcurrentHashMap<Integer, ProcessModel> allProcesses = new ConcurrentHashMap<>();
-    @Getter
-    private final ObservableList<ProcessModel> tableItems = FXCollections.observableArrayList();
-    private final TableView<ProcessModel> processTable;
+
+    // Flat sorted list shared with ProcessDetailView for its own live table
+    private final ObservableList<ProcessModel> flatItems = FXCollections.observableArrayList();
+
+    // Tree root (hidden) — children are group rows
+    private final TreeItem<ProcessModel> treeRoot = new TreeItem<>();
+    private final TreeTableView<ProcessModel> processTable;
 
     public MainChartView() {
         this.processTable = buildProcessTable();
@@ -29,18 +33,16 @@ public class MainChartView extends BorderPane {
     }
 
     /**
-     * Called on the JavaFX Application Thread (via Platform.runLater) after each scan completes.
-     * Updates existing ProcessModel instances in-place so JavaFX property bindings auto-refresh,
-     * adds new processes, removes gone ones, and re-sorts the table.
+     * Called on the JavaFX Application Thread after each scan.
+     * Updates existing ProcessModel instances in-place, then rebuilds the grouped tree.
      */
     public void updateProcesses(ConcurrentHashMap<Integer, ProcessModel> newScan) {
         Set<Integer> newPids = newScan.keySet();
 
-        // Remove processes that are no longer running
+        // Remove gone processes
         allProcesses.keySet().retainAll(newPids);
-        tableItems.removeIf(p -> !newPids.contains(p.getPid()));
 
-        // Update existing models in-place; add truly new processes
+        // Update existing models in-place; add new ones
         for (Map.Entry<Integer, ProcessModel> entry : newScan.entrySet()) {
             ProcessModel fresh = entry.getValue();
             ProcessModel existing = allProcesses.get(entry.getKey());
@@ -51,14 +53,59 @@ public class MainChartView extends BorderPane {
                 existing.cpuRankProperty().set(fresh.getCpuRank());
             } else {
                 allProcesses.put(entry.getKey(), fresh);
-                tableItems.add(fresh);
             }
         }
 
-        // Re-sort in place — preserves TableView selection
-        tableItems.sort(Comparator.comparingInt(ProcessModel::getCpuRank));
+        // Rebuild the flat list for ProcessDetailView
+        flatItems.setAll(allProcesses.values().stream().sorted(Comparator.comparingInt(ProcessModel::getCpuRank)).collect(Collectors.toList()));
+        rebuildTree();
     }
 
+    /**
+     * Rebuilds the TreeTableView by grouping allProcesses by name.
+     * Single-instance processes appear as flat rows; multi-instance groups are collapsible.
+     * Expansion state is preserved across rebuilds.
+     */
+    private void rebuildTree() {
+        // Preserve which group names are currently expanded
+        Set<String> expanded = treeRoot.getChildren().stream().filter(TreeItem::isExpanded).map(item -> item.getValue().getName()).collect(Collectors.toSet());
+
+        // Group by process name
+        Map<String, List<ProcessModel>> byName = allProcesses.values().stream().collect(Collectors.groupingBy(ProcessModel::getName));
+
+        List<TreeItem<ProcessModel>> groupItems = new ArrayList<>();
+
+        for (Map.Entry<String, List<ProcessModel>> entry : byName.entrySet()) {
+            String name = entry.getKey();
+            List<ProcessModel> instances = entry.getValue();
+
+            TreeItem<ProcessModel> groupItem;
+
+            if (instances.size() == 1) {
+                groupItem = new TreeItem<>(instances.getFirst());
+            } else {
+                // Aggregate CPU/RAM across all instances for the group row
+                double totalCpu = Math.min(100.0, instances.stream().mapToDouble(ProcessModel::getCpuUsagePercent).sum());
+                double totalRam = Math.min(100.0, instances.stream().mapToDouble(ProcessModel::getRamUsagePercent).sum());
+                int bestCpuRank = instances.stream().mapToInt(ProcessModel::getCpuRank).min().orElse(1);
+                int bestRamRank = instances.stream().mapToInt(ProcessModel::getRamRank).min().orElse(1);
+
+                ProcessModel aggregate = new ProcessModel(name, Category.UNCATEGORIZED, 0L, totalRam, totalCpu, bestRamRank, bestCpuRank, -1, 0L);
+
+                groupItem = new TreeItem<>(aggregate);
+                groupItem.setExpanded(expanded.contains(name));
+
+                instances.stream().sorted(Comparator.comparingDouble(ProcessModel::getCpuUsagePercent).reversed()).forEach(inst -> groupItem.getChildren().add(new TreeItem<>(inst)));
+            }
+
+            groupItems.add(groupItem);
+        }
+
+        // Sort groups by CPU usage descending (highest at top)
+        groupItems.sort(Comparator.comparingDouble((TreeItem<ProcessModel> item) -> item.getValue().getCpuUsagePercent()).reversed());
+
+        treeRoot.getChildren().setAll(groupItems);
+    }
 
     private HBox buildToolBar() {
         Button saveBtn = new Button("Save");
@@ -80,7 +127,6 @@ public class MainChartView extends BorderPane {
         header.setAlignment(Pos.CENTER_LEFT);
         return header;
     }
-
 
     private HBox buildCenter() {
         VBox leftPane = buildLeftPane();
@@ -121,35 +167,35 @@ public class MainChartView extends BorderPane {
         return pane;
     }
 
-
-    private TableView<ProcessModel> buildProcessTable() {
-        TableView<ProcessModel> table = new TableView<>();
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
-
-        TableColumn<ProcessModel, String> nameCol = new TableColumn<>("Process");
-        nameCol.setCellValueFactory(d -> d.getValue().nameProperty());
-        nameCol.setPrefWidth(220);
-
-        TableColumn<ProcessModel, String> catCol = new TableColumn<>("Category");
-        catCol.setCellValueFactory(d ->
-                new javafx.beans.property.SimpleStringProperty(d.getValue().getCategoryDisplay()));
-        catCol.setPrefWidth(120);
-
-        // Disable sorting on columns
-        nameCol.setSortable(false);
-        catCol.setSortable(false);
-
-        table.getColumns().addAll(nameCol, catCol);
-        table.setItems(tableItems);
+    private TreeTableView<ProcessModel> buildProcessTable() {
+        TreeTableView<ProcessModel> table = new TreeTableView<>(treeRoot);
+        table.setShowRoot(false);
+        table.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         table.setPlaceholder(new Label("Scanning..."));
 
-        table.getSortOrder().clear();
-        table.setSortPolicy(tv -> false);
+        TreeTableColumn<ProcessModel, String> nameCol = new TreeTableColumn<>("Process");
+        nameCol.setCellValueFactory(d -> d.getValue().getValue().nameProperty());
+        nameCol.setPrefWidth(200);
+        nameCol.setSortable(false);
 
-        // Row click: navigate to Process Detail View
+        TreeTableColumn<ProcessModel, String> cpuCol = new TreeTableColumn<>("CPU %");
+        cpuCol.setCellValueFactory(d -> Bindings.createStringBinding(() -> String.format("%.1f%%", d.getValue().getValue().getCpuUsagePercent()), d.getValue().getValue().cpuUsagePercentProperty()));
+        cpuCol.setPrefWidth(70);
+        cpuCol.setSortable(false);
+
+        TreeTableColumn<ProcessModel, String> ramCol = new TreeTableColumn<>("RAM %");
+        ramCol.setCellValueFactory(d -> Bindings.createStringBinding(() -> String.format("%.1f%%", d.getValue().getValue().getRamUsagePercent()), d.getValue().getValue().ramUsagePercentProperty()));
+        ramCol.setPrefWidth(70);
+        ramCol.setSortable(false);
+
+        table.getColumns().addAll(nameCol, cpuCol, ramCol);
+
+        // Navigate to detail view only for real individual processes (pid >= 0)
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, selected) -> {
-            if (selected != null) {
-                MainApplication.show(new ProcessDetailView(selected, tableItems));
+            if (selected != null && selected.getValue() != null) {
+                ProcessModel p = selected.getValue();
+                if (p.getPid() >= 0)
+                    MainApplication.show(new ProcessDetailView(p, flatItems));
             }
         });
 
@@ -158,16 +204,13 @@ public class MainChartView extends BorderPane {
 
 
     private PieChart buildPieChart() {
-        Map<Category, Long> totals = allProcesses.values().stream()
-                .collect(Collectors.groupingBy(ProcessModel::getCategory,
-                        Collectors.summingLong(ProcessModel::getTotalSeconds)));
+        Map<Category, Long> totals = allProcesses.values().stream().collect(Collectors.groupingBy(ProcessModel::getCategory, Collectors.summingLong(ProcessModel::getTotalSeconds)));
 
         List<PieChart.Data> data = new ArrayList<>();
+
         for (Category cat : Category.values()) {
             long seconds = totals.getOrDefault(cat, 0L);
-            if (seconds > 0) {
-                data.add(new PieChart.Data(cat.displayName(), seconds));
-            }
+            if (seconds > 0) data.add(new PieChart.Data(cat.displayName(), seconds));
         }
 
         PieChart chart = new PieChart(FXCollections.observableArrayList(data));
@@ -178,11 +221,8 @@ public class MainChartView extends BorderPane {
         return chart;
     }
 
-
     private VBox buildStatsSection() {
-        Map<Category, Long> totals = allProcesses.values().stream()
-                .collect(Collectors.groupingBy(ProcessModel::getCategory,
-                        Collectors.summingLong(ProcessModel::getTotalSeconds)));
+        Map<Category, Long> totals = allProcesses.values().stream().collect(Collectors.groupingBy(ProcessModel::getCategory, Collectors.summingLong(ProcessModel::getTotalSeconds)));
 
         VBox section = new VBox(4);
         for (Category cat : Category.values()) {
@@ -202,8 +242,7 @@ public class MainChartView extends BorderPane {
 
         Button detailsBtn = new Button("Details");
         detailsBtn.getStyleClass().add("details-button");
-        detailsBtn.setOnAction(e -> MainApplication.show(
-                new CategoryView(category, new ArrayList<>(allProcesses.values()))));
+        detailsBtn.setOnAction(e -> MainApplication.show(new CategoryView(category, new ArrayList<>(allProcesses.values()))));
 
         HBox row = new HBox(8, label, spacer, detailsBtn);
         row.getStyleClass().add("stats-row");
@@ -211,7 +250,6 @@ public class MainChartView extends BorderPane {
         return row;
     }
 
-   
     private static String formatSeconds(long s) {
         long h = s / 3600;
         long m = (s % 3600) / 60;
