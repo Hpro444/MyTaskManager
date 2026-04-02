@@ -94,9 +94,9 @@ public class ProcessScanTask extends RecursiveTask<ConcurrentHashMap<Integer, Pr
     private ProcessMetrics extractMetrics(OSProcess proc) {
         try {
             String processName = proc.getName();
-            if (processName == null || processName.isBlank()) {
+
+            if (processName == null || processName.isBlank())
                 return null;
-            }
 
             long residentSetSizeBytes = Math.max(0, proc.getResidentSetSize());
             double ramPercent = totalSystemMemoryBytes > 0 ? residentSetSizeBytes * 100.0 / totalSystemMemoryBytes : 0.0;
@@ -106,9 +106,7 @@ public class ProcessScanTask extends RecursiveTask<ConcurrentHashMap<Integer, Pr
             long startTime = proc.getStartTime();
 
             OSProcess prior = priorSnapshot.get(pid);
-            double cpuPercent = prior != null
-                    ? Math.min(100.0, proc.getProcessCpuLoadBetweenTicks(prior) * 100.0 / Math.max(1, logicalProcessorCount))
-                    : 0.0;
+            double cpuPercent = prior != null ? Math.min(100.0, proc.getProcessCpuLoadBetweenTicks(prior) * 100.0 / Math.max(1, logicalProcessorCount)) : 0.0;
 
             return new ProcessMetrics(processName, ramPercent, cpuPercent, pid, startTime);
 

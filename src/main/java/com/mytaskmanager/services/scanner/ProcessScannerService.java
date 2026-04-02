@@ -5,11 +5,7 @@ import oshi.SystemInfo;
 import oshi.software.os.OSProcess;
 import oshi.software.os.OperatingSystem;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
 
@@ -56,9 +52,7 @@ public class ProcessScannerService {
 
         ConcurrentHashMap<Integer, ProcessModel> scannedProcesses;
         try (ForkJoinPool scanPool = new ForkJoinPool()) {
-            ProcessScanTask scanTask = new ProcessScanTask(
-                    currentList, 0, currentList.size(),
-                    totalSystemMemoryBytes, logicalProcessorCount, priorSnapshot);
+            ProcessScanTask scanTask = new ProcessScanTask(currentList, 0, currentList.size(), totalSystemMemoryBytes, logicalProcessorCount, priorSnapshot);
             scannedProcesses = scanPool.invoke(scanTask);
         }
 

@@ -9,18 +9,16 @@ import javafx.geometry.Pos;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class MainChartView extends BorderPane {
 
     private final ConcurrentHashMap<Integer, ProcessModel> allProcesses = new ConcurrentHashMap<>();
+    @Getter
     private final ObservableList<ProcessModel> tableItems = FXCollections.observableArrayList();
     private final TableView<ProcessModel> processTable;
 
@@ -61,13 +59,6 @@ public class MainChartView extends BorderPane {
         tableItems.sort(Comparator.comparingInt(ProcessModel::getCpuRank));
     }
 
-    public ObservableList<ProcessModel> getTableItems() {
-        return tableItems;
-    }
-
-    // -------------------------------------------------------------------------
-    // Top toolbar
-    // -------------------------------------------------------------------------
 
     private HBox buildToolBar() {
         Button saveBtn = new Button("Save");
@@ -90,9 +81,6 @@ public class MainChartView extends BorderPane {
         return header;
     }
 
-    // -------------------------------------------------------------------------
-    // Center: table on the left, chart + stats on the right
-    // -------------------------------------------------------------------------
 
     private HBox buildCenter() {
         VBox leftPane = buildLeftPane();
@@ -133,9 +121,6 @@ public class MainChartView extends BorderPane {
         return pane;
     }
 
-    // -------------------------------------------------------------------------
-    // Process table
-    // -------------------------------------------------------------------------
 
     private TableView<ProcessModel> buildProcessTable() {
         TableView<ProcessModel> table = new TableView<>();
@@ -171,9 +156,6 @@ public class MainChartView extends BorderPane {
         return table;
     }
 
-    // -------------------------------------------------------------------------
-    // Pie chart
-    // -------------------------------------------------------------------------
 
     private PieChart buildPieChart() {
         Map<Category, Long> totals = allProcesses.values().stream()
@@ -196,9 +178,6 @@ public class MainChartView extends BorderPane {
         return chart;
     }
 
-    // -------------------------------------------------------------------------
-    // Category stats rows
-    // -------------------------------------------------------------------------
 
     private VBox buildStatsSection() {
         Map<Category, Long> totals = allProcesses.values().stream()
@@ -232,10 +211,7 @@ public class MainChartView extends BorderPane {
         return row;
     }
 
-    // -------------------------------------------------------------------------
-    // Utilities
-    // -------------------------------------------------------------------------
-
+   
     private static String formatSeconds(long s) {
         long h = s / 3600;
         long m = (s % 3600) / 60;

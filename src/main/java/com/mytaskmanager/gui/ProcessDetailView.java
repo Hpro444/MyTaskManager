@@ -8,18 +8,16 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-import java.util.Comparator;
-
 public class ProcessDetailView extends BorderPane {
 
     private final ObservableList<ProcessModel> allProcesses;
 
     private final Label processNameLabel = new Label();
-    private final Label totalTimeLabel   = new Label();
-    private final Label ramValueLabel    = new Label();
-    private final Label ramRankLabel     = new Label();
-    private final Label cpuValueLabel    = new Label();
-    private final Label cpuRankLabel     = new Label();
+    private final Label totalTimeLabel = new Label();
+    private final Label ramValueLabel = new Label();
+    private final Label ramRankLabel = new Label();
+    private final Label cpuValueLabel = new Label();
+    private final Label cpuRankLabel = new Label();
 
     private final TableView<ProcessModel> processTable;
 
@@ -33,12 +31,9 @@ public class ProcessDetailView extends BorderPane {
         bindDetailPanel(selected);
     }
 
-    // -------------------------------------------------------------------------
-    // Header: back button + toolbar
-    // -------------------------------------------------------------------------
 
     private HBox buildHeader() {
-        Button backBtn = new Button("\u2190 Back to Main Chart View");
+        Button backBtn = new Button("← Back to Main Chart View");
         backBtn.getStyleClass().add("back-button");
         backBtn.setOnAction(e -> MainApplication.showMain());
 
@@ -64,10 +59,6 @@ public class ProcessDetailView extends BorderPane {
         header.setAlignment(Pos.CENTER_LEFT);
         return header;
     }
-
-    // -------------------------------------------------------------------------
-    // Center: table left, detail panel right
-    // -------------------------------------------------------------------------
 
     private HBox buildCenter() {
         VBox leftPane = buildLeftPane();
@@ -121,29 +112,18 @@ public class ProcessDetailView extends BorderPane {
         Label actionsHeader = new Label("Process Actions");
         actionsHeader.getStyleClass().add("detail-subsection");
 
-        HBox topActions    = buildActionButtons();
+        HBox topActions = buildActionButtons();
         HBox bottomActions = buildActionButtons2();
 
-        VBox pane = new VBox(10,
-                processNameLabel,
-                totalTimeLabel,
-                sep1,
-                resourceHeader,
-                ramRow,
-                cpuRow,
-                sep2,
-                actionsHeader,
-                topActions,
-                bottomActions
-        );
+        VBox pane = new VBox(10, processNameLabel, totalTimeLabel, sep1, resourceHeader, ramRow, cpuRow, sep2, actionsHeader, topActions, bottomActions);
         pane.getStyleClass().addAll("card", "detail-panel");
         pane.setPrefWidth(520);
         return pane;
     }
 
     private HBox buildActionButtons() {
-        Button killBtn  = new Button("Kill Process");
-        Button nameBtn  = new Button("Change Name");
+        Button killBtn = new Button("Kill Process");
+        Button nameBtn = new Button("Change Name");
         killBtn.getStyleClass().addAll("action-button", "danger");
         nameBtn.getStyleClass().addAll("action-button", "neutral");
         killBtn.setOnAction(e -> showStub("Kill Process"));
@@ -155,7 +135,7 @@ public class ProcessDetailView extends BorderPane {
     }
 
     private HBox buildActionButtons2() {
-        Button freezeBtn   = new Button("Freeze Tracking");
+        Button freezeBtn = new Button("Freeze Tracking");
         Button categoryBtn = new Button("Change Category");
         freezeBtn.getStyleClass().addAll("action-button", "warning");
         categoryBtn.getStyleClass().addAll("action-button", "neutral");
@@ -167,10 +147,6 @@ public class ProcessDetailView extends BorderPane {
         return row;
     }
 
-    // -------------------------------------------------------------------------
-    // Process table — shares the live ObservableList from MainChartView
-    // -------------------------------------------------------------------------
-
     private TableView<ProcessModel> buildProcessTable(ProcessModel selected) {
         TableView<ProcessModel> table = new TableView<>();
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
@@ -180,8 +156,7 @@ public class ProcessDetailView extends BorderPane {
         nameCol.setPrefWidth(220);
 
         TableColumn<ProcessModel, String> catCol = new TableColumn<>("Category");
-        catCol.setCellValueFactory(d ->
-                new javafx.beans.property.SimpleStringProperty(d.getValue().getCategoryDisplay()));
+        catCol.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(d.getValue().getCategoryDisplay()));
         catCol.setPrefWidth(120);
 
         nameCol.setSortable(false);
@@ -202,37 +177,14 @@ public class ProcessDetailView extends BorderPane {
         return table;
     }
 
-    // -------------------------------------------------------------------------
-    // Bind detail panel labels to ProcessModel JavaFX properties
-    // -------------------------------------------------------------------------
-
     private void bindDetailPanel(ProcessModel p) {
         processNameLabel.textProperty().bind(p.nameProperty());
-
-        totalTimeLabel.textProperty().bind(Bindings.createStringBinding(
-                () -> "Total tracked time: " + p.getFormattedTime(),
-                p.totalSecondsProperty()));
-
-        ramValueLabel.textProperty().bind(Bindings.createStringBinding(
-                () -> String.format("RAM: %.1f%%", p.getRamUsagePercent()),
-                p.ramUsagePercentProperty()));
-
-        ramRankLabel.textProperty().bind(Bindings.createStringBinding(
-                () -> "  (" + ordinal(p.getRamRank()) + " on RAM usage)",
-                p.ramRankProperty()));
-
-        cpuValueLabel.textProperty().bind(Bindings.createStringBinding(
-                () -> String.format("CPU: %.1f%%", p.getCpuUsagePercent()),
-                p.cpuUsagePercentProperty()));
-
-        cpuRankLabel.textProperty().bind(Bindings.createStringBinding(
-                () -> "  (" + ordinal(p.getCpuRank()) + " on CPU usage)",
-                p.cpuRankProperty()));
+        totalTimeLabel.textProperty().bind(Bindings.createStringBinding(() -> "Total tracked time: " + p.getFormattedTime(), p.totalSecondsProperty()));
+        ramValueLabel.textProperty().bind(Bindings.createStringBinding(() -> String.format("RAM: %.1f%%", p.getRamUsagePercent()), p.ramUsagePercentProperty()));
+        ramRankLabel.textProperty().bind(Bindings.createStringBinding(() -> "  (" + ordinal(p.getRamRank()) + " on RAM usage)", p.ramRankProperty()));
+        cpuValueLabel.textProperty().bind(Bindings.createStringBinding(() -> String.format("CPU: %.1f%%", p.getCpuUsagePercent()), p.cpuUsagePercentProperty()));
+        cpuRankLabel.textProperty().bind(Bindings.createStringBinding(() -> "  (" + ordinal(p.getCpuRank()) + " on CPU usage)", p.cpuRankProperty()));
     }
-
-    // -------------------------------------------------------------------------
-    // Utilities
-    // -------------------------------------------------------------------------
 
     private static String ordinal(int n) {
         String[] suffixes = {"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"};

@@ -10,6 +10,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.Objects;
+
 public class MainApplication extends Application {
 
     private static Stage primaryStage;
@@ -23,9 +25,7 @@ public class MainApplication extends Application {
         ProcessScannerService scannerService = new ProcessScannerService();
         mainView = new MainChartView();
 
-        ProcessScanRunnable scanTask = new ProcessScanRunnable(
-                scannerService,
-                result -> Platform.runLater(() -> mainView.updateProcesses(result)));
+        ProcessScanRunnable scanTask = new ProcessScanRunnable(scannerService, result -> Platform.runLater(() -> mainView.updateProcesses(result)));
 
         ScanScheduler scheduler = new ScanScheduler(config);
         scheduler.start(scanTask);
@@ -33,8 +33,7 @@ public class MainApplication extends Application {
         stage.setOnCloseRequest(e -> scheduler.shutdown());
 
         Scene scene = new Scene(mainView, 1100, 680);
-        scene.getStylesheets().add(
-                MainApplication.class.getResource("styles.css").toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class.getResource("styles.css")).toExternalForm());
 
         stage.setTitle("Productivity Buddy");
         stage.setScene(scene);

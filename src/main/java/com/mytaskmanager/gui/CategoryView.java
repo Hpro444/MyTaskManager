@@ -17,25 +17,18 @@ import java.util.stream.Collectors;
 public class CategoryView extends BorderPane {
 
     public CategoryView(Category category, List<ProcessModel> allProcesses) {
-        List<ProcessModel> filtered = allProcesses.stream()
-                .filter(p -> p.getCategory() == category)
-                .collect(Collectors.toList());
+        List<ProcessModel> filtered = allProcesses.stream().filter(p -> p.getCategory() == category).collect(Collectors.toList());
 
-        long totalSeconds = filtered.stream()
-                .mapToLong(ProcessModel::getTotalSeconds)
-                .sum();
+        long totalSeconds = filtered.stream().mapToLong(ProcessModel::getTotalSeconds).sum();
 
         setTop(buildHeader(category));
         setCenter(buildCenter(filtered));
         setBottom(buildFooter(category, totalSeconds));
     }
 
-    // -------------------------------------------------------------------------
-    // Header: back button + title + toolbar
-    // -------------------------------------------------------------------------
 
     private HBox buildHeader(Category category) {
-        Button backBtn = new Button("\u2190 Back to Main Chart View");
+        Button backBtn = new Button("← Back to Main Chart View");
         backBtn.getStyleClass().add("back-button");
         backBtn.setOnAction(e -> MainApplication.showMain());
 
@@ -45,8 +38,8 @@ public class CategoryView extends BorderPane {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Button saveBtn     = new Button("Save");
-        Button loadBtn     = new Button("Load");
+        Button saveBtn = new Button("Save");
+        Button loadBtn = new Button("Load");
         Button shutdownBtn = new Button("Shutdown");
         saveBtn.getStyleClass().add("button");
         loadBtn.getStyleClass().add("button");
@@ -65,12 +58,9 @@ public class CategoryView extends BorderPane {
         return header;
     }
 
-    // -------------------------------------------------------------------------
-    // Center: filtered table left, top-10 pie chart right
-    // -------------------------------------------------------------------------
 
     private HBox buildCenter(List<ProcessModel> filtered) {
-        VBox leftPane  = buildLeftPane(filtered);
+        VBox leftPane = buildLeftPane(filtered);
         VBox rightPane = buildRightPane(filtered);
 
         HBox.setHgrow(leftPane, Priority.ALWAYS);
@@ -105,13 +95,11 @@ public class CategoryView extends BorderPane {
         nameCol.setPrefWidth(180);
 
         TableColumn<ProcessModel, String> ramCpuCol = new TableColumn<>("RAM / CPU");
-        ramCpuCol.setCellValueFactory(d ->
-                new SimpleStringProperty(d.getValue().getRamAndCpu()));
+        ramCpuCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getRamAndCpu()));
         ramCpuCol.setPrefWidth(120);
 
         TableColumn<ProcessModel, String> timeCol = new TableColumn<>("Time");
-        timeCol.setCellValueFactory(d ->
-                new SimpleStringProperty(d.getValue().getFormattedTime()));
+        timeCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getFormattedTime()));
         timeCol.setPrefWidth(110);
 
         table.getColumns().addAll(nameCol, ramCpuCol, timeCol);
@@ -135,14 +123,9 @@ public class CategoryView extends BorderPane {
     }
 
     private PieChart buildTopChart(List<ProcessModel> filtered) {
-        List<ProcessModel> top10 = filtered.stream()
-                .sorted(Comparator.comparingLong(ProcessModel::getTotalSeconds).reversed())
-                .limit(10)
-                .collect(Collectors.toList());
+        List<ProcessModel> top10 = filtered.stream().sorted(Comparator.comparingLong(ProcessModel::getTotalSeconds).reversed()).limit(10).toList();
 
-        List<PieChart.Data> data = top10.stream()
-                .map(p -> new PieChart.Data(p.getName(), p.getTotalSeconds()))
-                .collect(Collectors.toList());
+        List<PieChart.Data> data = top10.stream().map(p -> new PieChart.Data(p.getName(), p.getTotalSeconds())).collect(Collectors.toList());
 
         PieChart chart = new PieChart(FXCollections.observableArrayList(data));
         chart.setTitle("Top 10 by Time");
@@ -150,21 +133,15 @@ public class CategoryView extends BorderPane {
         chart.setLegendVisible(false);
         chart.setPrefHeight(320);
 
-        if (data.isEmpty()) {
+        if (data.isEmpty())
             chart.setTitle("No data");
-        }
 
         return chart;
     }
 
-    // -------------------------------------------------------------------------
-    // Footer: total time
-    // -------------------------------------------------------------------------
-
     private HBox buildFooter(Category category, long totalSeconds) {
         String timeStr = formatSeconds(totalSeconds);
-        Label label = new Label(category.displayName().toLowerCase()
-                + " total time — " + timeStr);
+        Label label = new Label(category.displayName().toLowerCase() + " total time — " + timeStr);
         label.getStyleClass().add("footer-total");
 
         HBox footer = new HBox(label);
@@ -172,10 +149,6 @@ public class CategoryView extends BorderPane {
         footer.setAlignment(Pos.CENTER_LEFT);
         return footer;
     }
-
-    // -------------------------------------------------------------------------
-    // Utilities
-    // -------------------------------------------------------------------------
 
     private static String formatSeconds(long s) {
         long h = s / 3600;
