@@ -16,5 +16,7 @@ public class ProcessMetrics {
     private final String name;
     private final double ramPercent;
     private final double cpuPercent;
+    private final int pid;
+    private final long startTime;
 
 }

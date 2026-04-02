@@ -2,8 +2,8 @@ package com.mytaskmanager.gui;
 
 import com.mytaskmanager.domain.Category;
 import com.mytaskmanager.domain.ProcessModel;
-import com.mytaskmanager.services.scanner.ProcessScannerService;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.chart.PieChart;
@@ -11,22 +11,58 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class MainChartView extends BorderPane {
 
-    private final List<ProcessModel> allProcesses;
+    private final ConcurrentHashMap<Integer, ProcessModel> allProcesses = new ConcurrentHashMap<>();
+    private final ObservableList<ProcessModel> tableItems = FXCollections.observableArrayList();
     private final TableView<ProcessModel> processTable;
 
     public MainChartView() {
-        ProcessScannerService scanner = new ProcessScannerService();
-        this.allProcesses = new ArrayList<>(scanner.scanProcesses());
         this.processTable = buildProcessTable();
-
         setTop(buildToolBar());
         setCenter(buildCenter());
+    }
+
+    /**
+     * Called on the JavaFX Application Thread (via Platform.runLater) after each scan completes.
+     * Updates existing ProcessModel instances in-place so JavaFX property bindings auto-refresh,
+     * adds new processes, removes gone ones, and re-sorts the table.
+     */
+    public void updateProcesses(ConcurrentHashMap<Integer, ProcessModel> newScan) {
+        Set<Integer> newPids = newScan.keySet();
+
+        // Remove processes that are no longer running
+        allProcesses.keySet().retainAll(newPids);
+        tableItems.removeIf(p -> !newPids.contains(p.getPid()));
+
+        // Update existing models in-place; add truly new processes
+        for (Map.Entry<Integer, ProcessModel> entry : newScan.entrySet()) {
+            ProcessModel fresh = entry.getValue();
+            ProcessModel existing = allProcesses.get(entry.getKey());
+            if (existing != null) {
+                existing.ramUsagePercentProperty().set(fresh.getRamUsagePercent());
+                existing.cpuUsagePercentProperty().set(fresh.getCpuUsagePercent());
+                existing.ramRankProperty().set(fresh.getRamRank());
+                existing.cpuRankProperty().set(fresh.getCpuRank());
+            } else {
+                allProcesses.put(entry.getKey(), fresh);
+                tableItems.add(fresh);
+            }
+        }
+
+        // Re-sort in place — preserves TableView selection
+        tableItems.sort(Comparator.comparingInt(ProcessModel::getCpuRank));
+    }
+
+    public ObservableList<ProcessModel> getTableItems() {
+        return tableItems;
     }
 
     // -------------------------------------------------------------------------
@@ -114,14 +150,21 @@ public class MainChartView extends BorderPane {
                 new javafx.beans.property.SimpleStringProperty(d.getValue().getCategoryDisplay()));
         catCol.setPrefWidth(120);
 
+        // Disable sorting on columns
+        nameCol.setSortable(false);
+        catCol.setSortable(false);
+
         table.getColumns().addAll(nameCol, catCol);
-        table.setItems(FXCollections.observableArrayList(allProcesses));
-        table.setPlaceholder(new Label("No processes found"));
+        table.setItems(tableItems);
+        table.setPlaceholder(new Label("Scanning..."));
+
+        table.getSortOrder().clear();
+        table.setSortPolicy(tv -> false);
 
         // Row click: navigate to Process Detail View
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, selected) -> {
             if (selected != null) {
-                MainApplication.show(new ProcessDetailView(selected, allProcesses));
+                MainApplication.show(new ProcessDetailView(selected, tableItems));
             }
         });
 
@@ -133,7 +176,7 @@ public class MainChartView extends BorderPane {
     // -------------------------------------------------------------------------
 
     private PieChart buildPieChart() {
-        Map<Category, Long> totals = allProcesses.stream()
+        Map<Category, Long> totals = allProcesses.values().stream()
                 .collect(Collectors.groupingBy(ProcessModel::getCategory,
                         Collectors.summingLong(ProcessModel::getTotalSeconds)));
 
@@ -158,7 +201,7 @@ public class MainChartView extends BorderPane {
     // -------------------------------------------------------------------------
 
     private VBox buildStatsSection() {
-        Map<Category, Long> totals = allProcesses.stream()
+        Map<Category, Long> totals = allProcesses.values().stream()
                 .collect(Collectors.groupingBy(ProcessModel::getCategory,
                         Collectors.summingLong(ProcessModel::getTotalSeconds)));
 
@@ -180,7 +223,8 @@ public class MainChartView extends BorderPane {
 
         Button detailsBtn = new Button("Details");
         detailsBtn.getStyleClass().add("details-button");
-        detailsBtn.setOnAction(e -> MainApplication.show(new CategoryView(category, allProcesses)));
+        detailsBtn.setOnAction(e -> MainApplication.show(
+                new CategoryView(category, new ArrayList<>(allProcesses.values()))));
 
         HBox row = new HBox(8, label, spacer, detailsBtn);
         row.getStyleClass().add("stats-row");

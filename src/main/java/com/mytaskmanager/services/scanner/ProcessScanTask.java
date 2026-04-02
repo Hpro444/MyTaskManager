@@ -6,9 +6,10 @@ import com.mytaskmanager.domain.ProcessModel;
 import lombok.RequiredArgsConstructor;
 import oshi.software.os.OSProcess;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RecursiveTask;
 
 /**
@@ -20,7 +21,7 @@ import java.util.concurrent.RecursiveTask;
  * </p>
  */
 @RequiredArgsConstructor
-public class ProcessScanTask extends RecursiveTask<List<ProcessModel>> {
+public class ProcessScanTask extends RecursiveTask<ConcurrentHashMap<Integer, ProcessModel>> {
 
     private static final int LEAF_THRESHOLD = 10;
 
@@ -29,31 +30,31 @@ public class ProcessScanTask extends RecursiveTask<List<ProcessModel>> {
     private final int endIndex;     // exclusive
     private final long totalSystemMemoryBytes;
     private final int logicalProcessorCount;
+    private final Map<Integer, OSProcess> priorSnapshot;
 
     /**
      * Executes the divide-and-conquer scan recursively until leaf threshold is reached.
      *
-     * @return list of ProcessModel objects collected from this segment and all subtasks
+     * @return map of PID -> ProcessModel collected from this segment and all subtasks
      */
     @Override
-    protected List<ProcessModel> compute() {
+    protected ConcurrentHashMap<Integer, ProcessModel> compute() {
         int segmentSize = endIndex - startIndex;
 
         if (segmentSize <= LEAF_THRESHOLD)
             return processLeaf();
 
-
         int midIndex = startIndex + segmentSize / 2;
-        ProcessScanTask leftTask = new ProcessScanTask(osProcessSnapshot, startIndex, midIndex, totalSystemMemoryBytes, logicalProcessorCount);
-        ProcessScanTask rightTask = new ProcessScanTask(osProcessSnapshot, midIndex, endIndex, totalSystemMemoryBytes, logicalProcessorCount);
+        ProcessScanTask leftTask = new ProcessScanTask(osProcessSnapshot, startIndex, midIndex, totalSystemMemoryBytes, logicalProcessorCount, priorSnapshot);
+        ProcessScanTask rightTask = new ProcessScanTask(osProcessSnapshot, midIndex, endIndex, totalSystemMemoryBytes, logicalProcessorCount, priorSnapshot);
 
         leftTask.fork();
-        List<ProcessModel> rightResults = rightTask.compute();
-        List<ProcessModel> leftResults = leftTask.join();
+        ConcurrentHashMap<Integer, ProcessModel> rightResults = rightTask.compute();
+        ConcurrentHashMap<Integer, ProcessModel> leftResults = leftTask.join();
 
-        List<ProcessModel> merged = new ArrayList<>(leftResults.size() + rightResults.size());
-        merged.addAll(leftResults);
-        merged.addAll(rightResults);
+        ConcurrentHashMap<Integer, ProcessModel> merged = new ConcurrentHashMap<>(leftResults.size() + rightResults.size());
+        merged.putAll(leftResults);
+        merged.putAll(rightResults);
         return merged;
     }
 
@@ -64,18 +65,21 @@ public class ProcessScanTask extends RecursiveTask<List<ProcessModel>> {
      * and access denied errors (included with 0.0 metrics).
      * </p>
      *
-     * @return list of ProcessModel objects for this leaf segment
+     * @return map of PID -> ProcessModel for this leaf segment
      */
-    private List<ProcessModel> processLeaf() {
-        List<ProcessModel> results = new ArrayList<>(endIndex - startIndex);
+    private ConcurrentHashMap<Integer, ProcessModel> processLeaf() {
+        ConcurrentHashMap<Integer, ProcessModel> results = new ConcurrentHashMap<>();
 
         for (int i = startIndex; i < endIndex; i++) {
             OSProcess proc = osProcessSnapshot.get(i);
             ProcessMetrics metrics = extractMetrics(proc);
 
-            if (metrics != null)
-                results.add(new ProcessModel(metrics.getName(), Category.UNCATEGORIZED, 0L, metrics.getRamPercent(), metrics.getCpuPercent(), 0,  0   ));
-
+            if (metrics != null) {
+                results.put(metrics.getPid(), new ProcessModel(
+                        metrics.getName(), Category.UNCATEGORIZED, 0L,
+                        metrics.getRamPercent(), metrics.getCpuPercent(), 0, 0,
+                        metrics.getPid(), metrics.getStartTime()));
+            }
         }
 
         return results;
@@ -95,10 +99,18 @@ public class ProcessScanTask extends RecursiveTask<List<ProcessModel>> {
             }
 
             long residentSetSizeBytes = Math.max(0, proc.getResidentSetSize());
-            double ramPercent = totalSystemMemoryBytes > 0 ? residentSetSizeBytes * 100.0 / totalSystemMemoryBytes: 0.0;
-            double cpuPercent = proc.getProcessCpuLoadCumulative() * 100.0/ Math.max(1, logicalProcessorCount); // Mateja ispravi ovo sranje
+            double ramPercent = totalSystemMemoryBytes > 0 ? residentSetSizeBytes * 100.0 / totalSystemMemoryBytes : 0.0;
+            int pid = proc.getProcessID();
+            if (pid == 0) return null; // System Idle Process — kernel artifact, not a real process
 
-            return new ProcessMetrics(processName, ramPercent, cpuPercent);
+            long startTime = proc.getStartTime();
+
+            OSProcess prior = priorSnapshot.get(pid);
+            double cpuPercent = prior != null
+                    ? Math.min(100.0, proc.getProcessCpuLoadBetweenTicks(prior) * 100.0 / Math.max(1, logicalProcessorCount))
+                    : 0.0;
+
+            return new ProcessMetrics(processName, ramPercent, cpuPercent, pid, startTime);
 
         } catch (NullPointerException | NoSuchElementException e) {
             return null; // process terminated between snapshot and metric read
@@ -107,7 +119,7 @@ public class ProcessScanTask extends RecursiveTask<List<ProcessModel>> {
             try {
                 String processName = proc.getName();
                 if (processName == null || processName.isBlank()) return null;
-                return new ProcessMetrics(processName, 0.0, 0.0);
+                return new ProcessMetrics(processName, 0.0, 0.0, 0, 0L);
             } catch (Exception ignored) {
                 return null;
             }

@@ -37,7 +37,7 @@ public class CategoryView extends BorderPane {
     private HBox buildHeader(Category category) {
         Button backBtn = new Button("\u2190 Back to Main Chart View");
         backBtn.getStyleClass().add("back-button");
-        backBtn.setOnAction(e -> MainApplication.show(new MainChartView()));
+        backBtn.setOnAction(e -> MainApplication.showMain());
 
         Label titleLabel = new Label(category.displayName() + " Category");
         titleLabel.getStyleClass().add("view-title");

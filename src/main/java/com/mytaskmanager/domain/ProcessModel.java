@@ -16,9 +16,6 @@ import lombok.AccessLevel;
 @ToString
 public class ProcessModel {
 
-
-    //proces id
-    // creational timestamp i ostala govna
     @Getter(AccessLevel.NONE)
     private final StringProperty name;
     @Getter(AccessLevel.NONE)
@@ -33,8 +30,17 @@ public class ProcessModel {
     private final IntegerProperty ramRank;
     @Getter(AccessLevel.NONE)
     private final IntegerProperty cpuRank;
+    @Getter(AccessLevel.NONE)
+    private final IntegerProperty pid;
+    @Getter(AccessLevel.NONE)
+    private final LongProperty startTime;
+    @Getter(AccessLevel.NONE)
+    private final StringProperty aliasName;
+    @Getter(AccessLevel.NONE)
+    private final BooleanProperty isTrackingFreezed;
 
-    public ProcessModel(String name, Category category, long totalSeconds, double ramUsagePercent, double cpuUsagePercent,int ramRank, int cpuRank) {
+    public ProcessModel(String name, Category category, long totalSeconds, double ramUsagePercent, double cpuUsagePercent,
+                        int ramRank, int cpuRank, int pid, long startTime) {
         this.name = new SimpleStringProperty(name);
         this.category = new SimpleObjectProperty<>(category);
         this.totalSeconds = new SimpleLongProperty(totalSeconds);
@@ -42,6 +48,10 @@ public class ProcessModel {
         this.cpuUsagePercent = new SimpleDoubleProperty(cpuUsagePercent);
         this.ramRank = new SimpleIntegerProperty(ramRank);
         this.cpuRank = new SimpleIntegerProperty(cpuRank);
+        this.pid = new SimpleIntegerProperty(pid);
+        this.startTime = new SimpleLongProperty(startTime);
+        this.aliasName = new SimpleStringProperty(name);
+        this.isTrackingFreezed = new SimpleBooleanProperty(false);
     }
 
     // Property accessors for JavaFX binding
@@ -52,6 +62,10 @@ public class ProcessModel {
     public DoubleProperty cpuUsagePercentProperty() { return cpuUsagePercent; }
     public IntegerProperty ramRankProperty() { return ramRank; }
     public IntegerProperty cpuRankProperty() { return cpuRank; }
+    public IntegerProperty pidProperty() { return pid; }
+    public LongProperty startTimeProperty() { return startTime; }
+    public StringProperty aliasNameProperty() { return aliasName; }
+    public BooleanProperty isTrackingFreezedProperty() { return isTrackingFreezed; }
 
     // Value getters
     public String getName() { return name.get(); }
@@ -61,6 +75,10 @@ public class ProcessModel {
     public double getCpuUsagePercent() { return cpuUsagePercent.get(); }
     public int getRamRank() { return ramRank.get(); }
     public int getCpuRank() { return cpuRank.get(); }
+    public int getPid() { return pid.get(); }
+    public long getStartTime() { return startTime.get(); }
+    public String getAliasName() { return aliasName.get(); }
+    public boolean isTrackingFreezed() { return isTrackingFreezed.get(); }
 
     public String getFormattedTime() {
         long s = totalSeconds.get();

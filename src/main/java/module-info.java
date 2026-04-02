@@ -8,6 +8,7 @@ module com.mytaskmanager {
     requires static lombok;
 
     exports com.mytaskmanager;
+    exports com.mytaskmanager.config;
     exports com.mytaskmanager.gui;
     exports com.mytaskmanager.services;
     exports com.mytaskmanager.domain;
