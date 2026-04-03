@@ -22,4 +22,5 @@ module com.mytaskmanager {
     exports com.mytaskmanager.services.watcher;
     exports com.mytaskmanager.services.fileIo;
     exports com.mytaskmanager.services.analytics;
+    exports com.mytaskmanager.services.snapshot;
 }

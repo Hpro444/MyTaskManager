@@ -1,6 +1,6 @@
 package com.mytaskmanager.utils;
 
-import com.mytaskmanager.domain.ProcessModel;
+import com.mytaskmanager.domain.ProcessSnapshot;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -26,7 +26,7 @@ public class CsvSnapshotWriter {
      * Filename: snapshot_<timestamp>.csv in the given directory.
      * Header: timestamp,pid,process_name,cpu_usage,ram_usage,category,alias_name
      */
-    public static void write(List<ProcessModel> processes, String directory) throws IOException {
+    public static void write(List<ProcessSnapshot> processes, String directory) throws IOException {
         Instant now = Instant.now();
         String filename = "snapshot_" + FILE_TS.format(now) + ".csv";
         File dir = new File(directory);
@@ -38,15 +38,15 @@ public class CsvSnapshotWriter {
             bw.newLine();
 
             String ts = ROW_TS.format(now);
-            for (ProcessModel p : processes) {
+            for (ProcessSnapshot p : processes) {
                 bw.write(String.format("%s,%d,%s,%.2f,%.2f,%s,%s",
                         ts,
-                        p.getPid(),
-                        escapeCsv(p.getName()),
-                        p.getCpuUsagePercent(),
-                        p.getRamUsagePercent(),
-                        p.getCategory().name(),
-                        escapeCsv(p.getAliasName())));
+                        p.pid(),
+                        escapeCsv(p.name()),
+                        p.cpuUsagePercent(),
+                        p.ramUsagePercent(),
+                        p.category().name(),
+                        escapeCsv(p.aliasName())));
                 bw.newLine();
             }
         }

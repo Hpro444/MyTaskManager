@@ -5,5 +5,5 @@ import java.util.Map;
 
 public record AnalyticsResult(
         Map<Category, Long> timeByCategory,
-        List<ProcessModel> top10ByTime
+        List<ProcessSnapshot> top10ByTime
 ) {}

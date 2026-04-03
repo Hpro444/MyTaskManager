@@ -1,7 +1,7 @@
 package com.mytaskmanager.services.fileIo;
 
 import com.mytaskmanager.domain.ProcessInfoEntry;
-import com.mytaskmanager.domain.ProcessModel;
+import com.mytaskmanager.domain.ProcessSnapshot;
 import com.mytaskmanager.utils.CsvSnapshotWriter;
 import com.mytaskmanager.utils.JsonProcessInfoReader;
 import com.mytaskmanager.utils.JsonProcessInfoWriter;
@@ -32,7 +32,7 @@ public class FileIoService {
         }
     }
 
-    public void writeCsvSnapshot(List<ProcessModel> processes, String directory) {
+    public void writeCsvSnapshot(List<ProcessSnapshot> processes, String directory) {
         try {
             CsvSnapshotWriter.write(processes, directory);
         } catch (IOException e) {

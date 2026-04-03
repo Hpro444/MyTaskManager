@@ -1,7 +1,9 @@
-package com.mytaskmanager.services.fileIo;
+package com.mytaskmanager.services.snapshot;
 
 import com.mytaskmanager.config.AppConfig;
-import com.mytaskmanager.domain.ProcessModel;
+import com.mytaskmanager.domain.ProcessSnapshot;
+import com.mytaskmanager.services.fileIo.FileIoScheduler;
+import com.mytaskmanager.services.fileIo.FileIoService;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -42,14 +44,14 @@ public class SnapshotService {
 
     /**
      * Checks both trigger conditions and submits a CSV write if either fires.
-     * Called on the analytics thread once per second.
+     * Called on the snapshot thread once per tick.
      */
-    public void checkAndTrigger(List<ProcessModel> processes) {
+    public void checkAndTrigger(List<ProcessSnapshot> processes) {
         checkFixedTimeSnapshots(processes);
         checkPeriodicSnapshot(processes);
     }
 
-    private void checkFixedTimeSnapshots(List<ProcessModel> processes) {
+    private void checkFixedTimeSnapshots(List<ProcessSnapshot> processes) {
         LocalTime now = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
         for (LocalTime fixed : fixedTimes) {
             String key = fixed.toString();
@@ -63,7 +65,7 @@ public class SnapshotService {
         }
     }
 
-    private void checkPeriodicSnapshot(List<ProcessModel> processes) {
+    private void checkPeriodicSnapshot(List<ProcessSnapshot> processes) {
         long elapsed = Duration.between(lastPeriodicSnapshot, Instant.now()).getSeconds();
         if (elapsed >= snapshotIntervalSeconds) {
             lastPeriodicSnapshot = Instant.now();

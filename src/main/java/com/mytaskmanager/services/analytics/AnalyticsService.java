@@ -3,6 +3,7 @@ package com.mytaskmanager.services.analytics;
 import com.mytaskmanager.domain.AnalyticsResult;
 import com.mytaskmanager.domain.Category;
 import com.mytaskmanager.domain.ProcessModel;
+import com.mytaskmanager.domain.ProcessSnapshot;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -12,25 +13,30 @@ import java.util.stream.Collectors;
  * Pure analytics computation — no scheduling, no threading, no IO.
  * <p>
  * The process list is published from the FX thread via {@link #publishSnapshot}
- * using an {@link AtomicReference}. The analytics thread reads it lock-free via {@link #tick()}.
+ * using an {@link AtomicReference}. Each {@link ProcessModel} is converted to an immutable
+ * {@link ProcessSnapshot} at publish time (safe: FX thread owns the models), so the analytics
+ * thread reads only immutable data lock-free via {@link #tick()}.
  */
 public class AnalyticsService {
 
-    private final AtomicReference<List<ProcessModel>> snapshot = new AtomicReference<>(List.of());
+    private final AtomicReference<List<ProcessSnapshot>> snapshot = new AtomicReference<>(List.of());
 
     /**
      * Called on the JavaFX Application Thread after every process scan update.
-     * Creates an immutable copy of the process list for the analytics thread to consume safely.
+     * Converts each ProcessModel to an immutable ProcessSnapshot so background threads
+     * never touch JavaFX property objects.
      */
     public void publishSnapshot(Collection<ProcessModel> processes) {
-        snapshot.set(List.copyOf(processes));
+        snapshot.set(processes.stream()
+                .map(ProcessSnapshot::of)
+                .collect(Collectors.toUnmodifiableList()));
     }
 
     /**
      * Returns the current process snapshot. Used by {@link AnalyticsRunnable}
      * to pass to other services that run alongside analytics each tick.
      */
-    public List<ProcessModel> getCurrentSnapshot() {
+    public List<ProcessSnapshot> getCurrentSnapshot() {
         return snapshot.get();
     }
 
@@ -42,22 +48,22 @@ public class AnalyticsService {
         return compute(snapshot.get());
     }
 
-    private AnalyticsResult compute(List<ProcessModel> current) {
+    private AnalyticsResult compute(List<ProcessSnapshot> current) {
         // Deduplicate by name (take max time across instances), then sum per category
         Map<Category, Long> byCategory = current.stream()
-                .filter(m -> !m.isTrackingFreezed())
+                .filter(m -> !m.trackingFreezed())
                 .collect(Collectors.groupingBy(
-                        ProcessModel::getName,
-                        Collectors.maxBy(Comparator.comparingLong(ProcessModel::getTotalSeconds))))
+                        ProcessSnapshot::name,
+                        Collectors.maxBy(Comparator.comparingLong(ProcessSnapshot::totalSeconds))))
                 .values().stream()
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.groupingBy(
-                        ProcessModel::getCategory,
-                        Collectors.summingLong(ProcessModel::getTotalSeconds)));
+                        ProcessSnapshot::category,
+                        Collectors.summingLong(ProcessSnapshot::totalSeconds)));
 
-        List<ProcessModel> top10 = current.stream()
-                .sorted(Comparator.comparingLong(ProcessModel::getTotalSeconds).reversed())
+        List<ProcessSnapshot> top10 = current.stream()
+                .sorted(Comparator.comparingLong(ProcessSnapshot::totalSeconds).reversed())
                 .limit(10)
                 .collect(Collectors.toList());
 

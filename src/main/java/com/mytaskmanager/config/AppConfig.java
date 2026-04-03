@@ -29,6 +29,10 @@ public class AppConfig {
         return properties.getProperty("mapping.file", "process_info.json");
     }
 
+    public long getSnapshotSchedulerDelaySeconds() {
+        return Long.parseLong(properties.getProperty("snapshot.scheduler.delay", "1"));
+    }
+
     public long getSnapshotIntervalSeconds() {
         return Long.parseLong(properties.getProperty("snapshot.interval", "60"));
     }

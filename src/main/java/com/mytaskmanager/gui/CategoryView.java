@@ -1,7 +1,7 @@
 package com.mytaskmanager.gui;
 
 import com.mytaskmanager.domain.Category;
-import com.mytaskmanager.domain.ProcessModel;
+import com.mytaskmanager.domain.ProcessSnapshot;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,7 +19,7 @@ public class CategoryView extends BorderPane {
     private Category currentCategory;
 
     private final Label titleLabel;
-    private final ObservableList<ProcessModel> tableItems = FXCollections.observableArrayList();
+    private final ObservableList<ProcessSnapshot> tableItems = FXCollections.observableArrayList();
     private final PieChart topChart;
     private final Label footerLabel;
 
@@ -52,35 +52,35 @@ public class CategoryView extends BorderPane {
      * Updates all UI components for the given category using the latest process snapshot.
      * Safe to call on every analytics tick.
      */
-    public void applyUpdate(Category category, List<ProcessModel> allProcesses) {
+    public void applyUpdate(Category category, List<ProcessSnapshot> allProcesses) {
         if (category != currentCategory) lastPieTotals.clear();
         currentCategory = category;
         titleLabel.setText(category.displayName() + " Category");
 
-        List<ProcessModel> filtered = allProcesses.stream()
-                .filter(p -> p.getCategory() == category)
+        List<ProcessSnapshot> filtered = allProcesses.stream()
+                .filter(p -> p.category() == category)
                 .collect(Collectors.toList());
 
         tableItems.setAll(filtered);
 
-        List<ProcessModel> top10 = filtered.stream()
-                .sorted(Comparator.comparingLong(ProcessModel::getTotalSeconds).reversed())
+        List<ProcessSnapshot> top10 = filtered.stream()
+                .sorted(Comparator.comparingLong(ProcessSnapshot::totalSeconds).reversed())
                 .limit(10)
                 .toList();
         Map<String, Long> newPieTotals = new LinkedHashMap<>();
-        top10.forEach(p -> newPieTotals.put(p.getAliasName(), p.getTotalSeconds()));
+        top10.forEach(p -> newPieTotals.put(p.aliasName(), p.totalSeconds()));
 
         if (pieChanged(newPieTotals)) {
             lastPieTotals.clear();
             lastPieTotals.putAll(newPieTotals);
             List<PieChart.Data> data = top10.stream()
-                    .map(p -> new PieChart.Data(p.getAliasName(), p.getTotalSeconds()))
+                    .map(p -> new PieChart.Data(p.aliasName(), p.totalSeconds()))
                     .collect(Collectors.toList());
             topChart.getData().setAll(data);
             topChart.setTitle(data.isEmpty() ? "No data" : "Top 10 by Time");
         }
 
-        long totalSeconds = filtered.stream().mapToLong(ProcessModel::getTotalSeconds).sum();
+        long totalSeconds = filtered.stream().mapToLong(ProcessSnapshot::totalSeconds).sum();
         footerLabel.setText(category.displayName().toLowerCase() + " total time — " + formatSeconds(totalSeconds));
     }
 
@@ -129,7 +129,7 @@ public class CategoryView extends BorderPane {
         Label title = new Label("Processes");
         title.getStyleClass().add("section-title");
 
-        TableView<ProcessModel> table = buildTable();
+        TableView<ProcessSnapshot> table = buildTable();
         VBox.setVgrow(table, Priority.ALWAYS);
 
         VBox pane = new VBox(10, title, table);
@@ -139,20 +139,20 @@ public class CategoryView extends BorderPane {
         return pane;
     }
 
-    private TableView<ProcessModel> buildTable() {
-        TableView<ProcessModel> table = new TableView<>(tableItems);
+    private TableView<ProcessSnapshot> buildTable() {
+        TableView<ProcessSnapshot> table = new TableView<>(tableItems);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
-        TableColumn<ProcessModel, String> nameCol = new TableColumn<>("Name");
-        nameCol.setCellValueFactory(d -> d.getValue().aliasNameProperty());
+        TableColumn<ProcessSnapshot, String> nameCol = new TableColumn<>("Name");
+        nameCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().aliasName()));
         nameCol.setPrefWidth(180);
 
-        TableColumn<ProcessModel, String> ramCpuCol = new TableColumn<>("RAM / CPU");
-        ramCpuCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getRamAndCpu()));
+        TableColumn<ProcessSnapshot, String> ramCpuCol = new TableColumn<>("RAM / CPU");
+        ramCpuCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().ramAndCpu()));
         ramCpuCol.setPrefWidth(120);
 
-        TableColumn<ProcessModel, String> timeCol = new TableColumn<>("Time");
-        timeCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getFormattedTime()));
+        TableColumn<ProcessSnapshot, String> timeCol = new TableColumn<>("Time");
+        timeCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().formattedTime()));
         timeCol.setPrefWidth(110);
 
         table.getColumns().addAll(nameCol, ramCpuCol, timeCol);

@@ -9,9 +9,11 @@ import com.mytaskmanager.services.analytics.AnalyticsScheduler;
 import com.mytaskmanager.services.analytics.AnalyticsService;
 import com.mytaskmanager.services.fileIo.FileIoScheduler;
 import com.mytaskmanager.services.fileIo.FileIoService;
-import com.mytaskmanager.services.fileIo.SnapshotService;
 import com.mytaskmanager.services.scanner.ProcessScannerRunnable;
 import com.mytaskmanager.services.scanner.ProcessScannerService;
+import com.mytaskmanager.services.snapshot.SnapshotRunnable;
+import com.mytaskmanager.services.snapshot.SnapshotScheduler;
+import com.mytaskmanager.services.snapshot.SnapshotService;
 import com.mytaskmanager.services.watcher.WatcherRunnable;
 import com.mytaskmanager.services.watcher.WatcherService;
 import javafx.application.Application;
@@ -39,16 +41,12 @@ public class MainApplication extends Application {
     private static ScanScheduler scanScheduler;
     private static AnalyticsScheduler analyticsScheduler;
     private static AnalyticsService analyticsService;
+    private static SnapshotScheduler snapshotScheduler;
     private static WatcherService watcherService;
 
     @Override
     public void start(Stage stage) {
         primaryStage = stage;
-
-        // Suppress JavaFX 21 BSS bug: modena stores .chart-pie -fx-background-color as a String
-        // causing a harmless ClassCastException warning on every pie chart render.
-        java.util.logging.Logger.getLogger("javafx.scene.CssStyleHelper")
-                .setLevel(java.util.logging.Level.OFF);
 
         config = new AppConfig();
         fileIoService = new FileIoService();
@@ -62,7 +60,7 @@ public class MainApplication extends Application {
         categoryView = new CategoryView();
 
         // Wire analytics results back to the UI on the FX thread
-        AnalyticsRunnable analyticsRunnable = new AnalyticsRunnable(analyticsService, snapshotService,
+        AnalyticsRunnable analyticsRunnable = new AnalyticsRunnable(analyticsService,
                 result -> Platform.runLater(() -> {
                     mainView.applyAnalytics(result);
                     Category cat = categoryView.getCurrentCategory();
@@ -72,9 +70,12 @@ public class MainApplication extends Application {
         analyticsScheduler = new AnalyticsScheduler();
         analyticsScheduler.start(analyticsRunnable);
 
+        SnapshotRunnable snapshotRunnable = new SnapshotRunnable(analyticsService::getCurrentSnapshot, snapshotService);
+        snapshotScheduler = new SnapshotScheduler();
+        snapshotScheduler.start(snapshotRunnable, config.getSnapshotSchedulerDelaySeconds());
+ 
         watcherService = new WatcherService(config);
-        WatcherRunnable watcherRunnable = new WatcherRunnable(watcherService,
-                entries -> Platform.runLater(() -> mainView.applyMappingUpdates(entries)));
+        WatcherRunnable watcherRunnable = new WatcherRunnable(watcherService, entries -> Platform.runLater(() -> mainView.applyMappingUpdates(entries)));
 
         // Start watcher only after the first scan so allProcesses is populated
         // when the initial readCurrent() fires inside WatcherRunnable.run()
@@ -163,6 +164,7 @@ public class MainApplication extends Application {
     public static void performShutdown() {
         scanScheduler.shutdown();
         analyticsScheduler.shutdown();
+        snapshotScheduler.shutdown();
         watcherService.stop();
 
         // Collect current state on the FX thread before handing off to file I/O
