@@ -5,182 +5,189 @@
       "aliasName": "Twingate.Service",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "NVDisplay.Container",
       "aliasName": "NVDisplay.Container",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "cowork-svc",
       "aliasName": "cowork-svc",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "sunshine",
       "aliasName": "sunshine",
       "category": "Fun",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "logi_lamparray_service",
       "aliasName": "logi_lamparray_service",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "ShellHost",
       "aliasName": "ShellHost",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "Memory Compression",
       "aliasName": "Memory Compression",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "fsnotifier",
       "aliasName": "fsnotifier",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "vmmem",
       "aliasName": "vmmem",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "CPUMetricsServer",
       "aliasName": "CPUMetricsServer",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "cef_server",
       "aliasName": "cef_server",
       "category": "Uncategorized",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 8
+      "totalTimeSeconds": 80
     },
     {
       "originalName": "smss",
       "aliasName": "smss",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "java",
       "aliasName": "JAVAAAAA",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 408
+      "totalTimeSeconds": 480
     },
     {
       "originalName": "msedgewebview2",
       "aliasName": "msedgewebview2",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "powershell",
       "aliasName": "powershell",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "nvcontainer",
       "aliasName": "nvcontainer",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "wallpaperservice32",
       "aliasName": "wallpaperservice32",
       "category": "Fun",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "RuntimeBroker",
       "aliasName": "RuntimeBroker",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "idea64",
       "aliasName": "idea64",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
+    },
+    {
+      "originalName": "ai",
+      "aliasName": "ai",
+      "category": "Uncategorized",
+      "isTrackingFrozen": false,
+      "totalTimeSeconds": 72
     },
     {
       "originalName": "amdow",
       "aliasName": "amdow",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "SystemSettings",
       "aliasName": "SystemSettings",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "taskhostw",
       "aliasName": "taskhostw",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "winlogon",
       "aliasName": "winlogon",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "atiesrxx",
       "aliasName": "atiesrxx",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "explorer",
       "aliasName": "explorer",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "backgroundTaskHost",
       "aliasName": "backgroundTaskHost",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "dwm",
@@ -194,553 +201,567 @@
       "aliasName": "OfficeClickToRun",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "cmd",
       "aliasName": "cmd",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "StartMenuExperienceHost",
       "aliasName": "StartMenuExperienceHost",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "cncmd",
       "aliasName": "cncmd",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "csrss",
       "aliasName": "csrss",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "AmdPpkgSvc",
       "aliasName": "AmdPpkgSvc",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "audiodg",
       "aliasName": "audiodg",
       "category": "Uncategorized",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 352
+      "totalTimeSeconds": 424
     },
     {
       "originalName": "ctfmon",
       "aliasName": "ctfmon",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "MpDefenderCoreService",
       "aliasName": "MpDefenderCoreService",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "AggregatorHost",
       "aliasName": "AggregatorHost",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "svchost",
       "aliasName": "svchost",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "AMDRSServ",
       "aliasName": "AMDRSServ",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "spoolsv",
       "aliasName": "spoolsv",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "services",
       "aliasName": "services",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "DiscSoftBusServiceLite",
       "aliasName": "DiscSoftBusServiceLite",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "webwallpaper32",
       "aliasName": "webwallpaper32",
       "category": "Fun",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "UserOOBEBroker",
       "aliasName": "UserOOBEBroker",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "PowerToys.ColorPickerUI",
       "aliasName": "PowerToys.ColorPickerUI",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "SecurityHealthSystray",
       "aliasName": "SecurityHealthSystray",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
+    },
+    {
+      "originalName": "aimgr",
+      "aliasName": "aimgr",
+      "category": "Uncategorized",
+      "isTrackingFrozen": false,
+      "totalTimeSeconds": 72
     },
     {
       "originalName": "WidgetService",
       "aliasName": "WidgetService",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "wallpaper32",
       "aliasName": "wallpaper32",
       "category": "Fun",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "SecurityHealthService",
       "aliasName": "SecurityHealthService",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "TextInputHost",
       "aliasName": "TextInputHost",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "Twingate",
       "aliasName": "Twingate",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "wslservice",
       "aliasName": "wslservice",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
+    },
+    {
+      "originalName": "WINWORD",
+      "aliasName": "WINWORD",
+      "category": "Uncategorized",
+      "isTrackingFrozen": false,
+      "totalTimeSeconds": 72
     },
     {
       "originalName": "NgcIso",
       "aliasName": "NgcIso",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "PowerToys",
       "aliasName": "PowerToys",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "claude",
       "aliasName": "claude",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "ShellExperienceHost",
       "aliasName": "ShellExperienceHost",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "Widgets",
       "aliasName": "Widgets",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "PhoneExperienceHost",
       "aliasName": "PhoneExperienceHost",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "PowerToys.FancyZones",
       "aliasName": "PowerToys.FancyZones",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "conhost",
       "aliasName": "conhost",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "wininit",
       "aliasName": "wininit",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "spaceman",
       "aliasName": "spaceman",
       "category": "Fun",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "copilot-language-server",
       "aliasName": "copilot-language-server",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "CrossDeviceResume",
       "aliasName": "CrossDeviceResume",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "chrome",
       "aliasName": "chrome",
       "category": "Fun",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "vmms",
       "aliasName": "vmms",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "jetbrainsd",
       "aliasName": "jetbrainsd",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "AppActions",
       "aliasName": "AppActions",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "Lightshot",
       "aliasName": "Lightshot",
       "category": "Fun",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "fontdrvhost",
       "aliasName": "fontdrvhost",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "sunshinesvc",
       "aliasName": "sunshinesvc",
       "category": "Fun",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "DTShellHlp",
       "aliasName": "DTShellHlp",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "vmcompute",
       "aliasName": "vmcompute",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "dasHost",
       "aliasName": "dasHost",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "nvsphelper64",
       "aliasName": "nvsphelper64",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "RTUWPSrvcMain",
       "aliasName": "RTUWPSrvcMain",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "PowerToys.AlwaysOnTop",
       "aliasName": "PowerToys.AlwaysOnTop",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "PowerToys.CropAndLock",
       "aliasName": "PowerToys.CropAndLock",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "atieclxx",
       "aliasName": "atieclxx",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "LsaIso",
       "aliasName": "LsaIso",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "RadeonSoftware",
       "aliasName": "RadeonSoftware",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "lsass",
       "aliasName": "lsass",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "LockApp",
       "aliasName": "LockApp",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "WmiPrvSE",
       "aliasName": "WmiPrvSE",
       "category": "Uncategorized",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 38
+      "totalTimeSeconds": 110
     },
     {
       "originalName": "PowerToys.Peek.UI",
       "aliasName": "PowerToys.Peek.UI",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "remoting_host",
       "aliasName": "remoting_host",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "NisSrv",
       "aliasName": "NisSrv",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "sihost",
       "aliasName": "sihost",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "WhatsApp.Root",
       "aliasName": "WhatsApp.Root",
       "category": "Uncategorized",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "Todoist",
       "aliasName": "Todoist",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "System",
       "aliasName": "System",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "dllhost",
       "aliasName": "dllhost",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "ApplicationFrameHost",
       "aliasName": "ApplicationFrameHost",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "Secure System",
       "aliasName": "Secure System",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "SearchHost",
       "aliasName": "SearchHost",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "jetbrains-toolbox",
       "aliasName": "jetbrains-toolbox",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "AMDRSSrcExt",
       "aliasName": "AMDRSSrcExt",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "vmwp",
       "aliasName": "vmwp",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "MidiSrv",
       "aliasName": "MidiSrv",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "OpenConsole",
       "aliasName": "OpenConsole",
       "category": "Uncategorized",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "NVIDIA Overlay",
       "aliasName": "NVIDIA Overlay",
       "category": "Fun",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "Registry",
       "aliasName": "Registry",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "PowerToys.PowerLauncher",
       "aliasName": "PowerToys.PowerLauncher",
       "category": "Work",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "MsMpEng",
       "aliasName": "MsMpEng",
       "category": "Fun",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "amdfendrsr",
       "aliasName": "amdfendrsr",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     },
     {
       "originalName": "SearchIndexer",
       "aliasName": "SearchIndexer",
       "category": "Other",
       "isTrackingFrozen": false,
-      "totalTimeSeconds": 420
+      "totalTimeSeconds": 492
     }
   ]
 }

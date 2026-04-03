@@ -117,7 +117,18 @@ public class ProcessScannerTask extends RecursiveTask<ConcurrentHashMap<Integer,
             try {
                 String processName = proc.getName();
                 if (processName == null || processName.isBlank()) return null;
-                return new ProcessMetrics(processName, 0.0, 0.0, 0, 0L);
+
+                int pid = proc.getProcessID();
+                if (pid == 0) return null; // keep idle-process filtering consistent
+
+                long startTime;
+                try {
+                    startTime = proc.getStartTime();
+                } catch (Exception ignored) {
+                    startTime = 0L;
+                }
+
+                return new ProcessMetrics(processName, 0.0, 0.0, pid, startTime);
             } catch (Exception ignored) {
                 return null;
             }

@@ -69,12 +69,13 @@ public class MainChartView extends BorderPane {
                 if (existing.getStartTime() != fresh.getStartTime()) {
                     allProcesses.put(pid, fresh);
                 } else {
-                    existing.ramUsagePercentProperty().set(fresh.getRamUsagePercent());
-                    existing.cpuUsagePercentProperty().set(fresh.getCpuUsagePercent());
-                    existing.ramRankProperty().set(fresh.getRamRank());
-                    existing.cpuRankProperty().set(fresh.getCpuRank());
-                    if (!existing.isTrackingFreezed())
+                    if (!existing.isTrackingFreezed()) {
+                        existing.ramUsagePercentProperty().set(fresh.getRamUsagePercent());
+                        existing.cpuUsagePercentProperty().set(fresh.getCpuUsagePercent());
+                        existing.ramRankProperty().set(fresh.getRamRank());
+                        existing.cpuRankProperty().set(fresh.getCpuRank());
                         existing.totalSecondsProperty().set(existing.getTotalSeconds() + fresh.getTotalSeconds());
+                    }
                 }
             } else {
                 allProcesses.put(pid, fresh);
@@ -194,11 +195,15 @@ public class MainChartView extends BorderPane {
      * Assigns RAM and CPU ranks to allProcesses. Must run on the FX Application Thread.
      */
     private void assignRanks() {
-        List<ProcessModel> byRam = new ArrayList<>(allProcesses.values());
+        List<ProcessModel> byRam = allProcesses.values().stream()
+                .filter(p -> !p.isTrackingFreezed())
+                .collect(Collectors.toList());
         byRam.sort(Comparator.comparingDouble(ProcessModel::getRamUsagePercent).reversed());
         for (int i = 0; i < byRam.size(); i++) byRam.get(i).ramRankProperty().set(i + 1);
 
-        List<ProcessModel> byCpu = new ArrayList<>(allProcesses.values());
+        List<ProcessModel> byCpu = allProcesses.values().stream()
+                .filter(p -> !p.isTrackingFreezed())
+                .collect(Collectors.toList());
         byCpu.sort(Comparator.comparingDouble(ProcessModel::getCpuUsagePercent).reversed());
         for (int i = 0; i < byCpu.size(); i++) byCpu.get(i).cpuRankProperty().set(i + 1);
     }

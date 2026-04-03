@@ -33,12 +33,8 @@ public class FileIoScheduler {
     public void shutdownAndAwait() {
         executor.shutdown();
         try {
-            boolean terminated = executor.awaitTermination(10, TimeUnit.SECONDS);
-            if (!terminated) {
-                executor.shutdownNow();
-            }
+            executor.awaitTermination(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            executor.shutdownNow();
             Thread.currentThread().interrupt();
         }
     }

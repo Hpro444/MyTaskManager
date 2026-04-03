@@ -5,11 +5,10 @@ import oshi.SystemInfo;
 import oshi.software.os.OSProcess;
 import oshi.software.os.OperatingSystem;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
+import java.util.function.ToDoubleFunction;
 
 /**
  * Service responsible for scanning active OS processes in parallel.
@@ -71,6 +70,41 @@ public class ProcessScannerService {
         }
         lastSeenTimestampMs.keySet().retainAll(scannedProcesses.keySet());
 
+        assignRanks(scannedProcesses);
+
         return scannedProcesses;
+    }
+
+    private static void assignRanks(Map<Integer, ProcessModel> scannedProcesses) {
+        List<ProcessModel> byRam = new ArrayList<>(scannedProcesses.values());
+        byRam.sort(Comparator.comparingDouble(ProcessModel::getRamUsagePercent).reversed()
+                .thenComparingInt(ProcessModel::getPid));
+        assignRankWithTies(byRam, ProcessModel::getRamUsagePercent, true);
+
+        List<ProcessModel> byCpu = new ArrayList<>(scannedProcesses.values());
+        byCpu.sort(Comparator.comparingDouble(ProcessModel::getCpuUsagePercent).reversed()
+                .thenComparingInt(ProcessModel::getPid));
+        assignRankWithTies(byCpu, ProcessModel::getCpuUsagePercent, false);
+    }
+
+    private static void assignRankWithTies(List<ProcessModel> ordered,
+                                           ToDoubleFunction<ProcessModel> metric,
+                                           boolean ramRank) {
+        int rank = 0;
+        int position = 0;
+        double previous = Double.NaN;
+        for (ProcessModel model : ordered) {
+            position++;
+            double current = metric.applyAsDouble(model);
+            if (Double.isNaN(previous) || Double.compare(current, previous) != 0) {
+                rank = position;
+                previous = current;
+            }
+            if (ramRank) {
+                model.ramRankProperty().set(rank);
+            } else {
+                model.cpuRankProperty().set(rank);
+            }
+        }
     }
 }
