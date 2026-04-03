@@ -1,7 +1,8 @@
 package com.mytaskmanager.domain;
 
 public enum Category {
-    WORK, FUN, OTHER, UNCATEGORIZED;
+    WORK, FUN, OTHER,
+    @com.fasterxml.jackson.annotation.JsonEnumDefaultValue UNCATEGORIZED;
 
     public String displayName() {
         return switch (this) {

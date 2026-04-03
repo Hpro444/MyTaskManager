@@ -5,7 +5,9 @@ import oshi.SystemInfo;
 import oshi.software.os.OSProcess;
 import oshi.software.os.OperatingSystem;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
 
@@ -23,6 +25,7 @@ public class ProcessScannerService {
     private final OperatingSystem operatingSystem;
 
     private Map<Integer, OSProcess> previousSnapshot = new HashMap<>();
+    private Map<Integer, Long> lastSeenTimestampMs = new HashMap<>();
 
     public ProcessScannerService() {
         this.systemInfo = new SystemInfo();
@@ -33,7 +36,7 @@ public class ProcessScannerService {
      * Scans all active OS processes in parallel and returns performance snapshots keyed by PID.
      * Must be called from a background thread — never the JavaFX Application Thread.
      *
-     * @return map of PID -> {@link ProcessModel} with ranks assigned; empty if no processes found
+     * @return map of PID -> {@link ProcessModel}; empty if no processes found
      */
     public ConcurrentHashMap<Integer, ProcessModel> scanProcesses() {
         long totalSystemMemoryBytes = systemInfo.getHardware().getMemory().getTotal();
@@ -50,31 +53,24 @@ public class ProcessScannerService {
         for (OSProcess p : currentList) nextSnapshot.put(p.getProcessID(), p);
         previousSnapshot = nextSnapshot;
 
+        long nowMs = System.currentTimeMillis();
+
         ConcurrentHashMap<Integer, ProcessModel> scannedProcesses;
         try (ForkJoinPool scanPool = new ForkJoinPool()) {
-            ProcessScanTask scanTask = new ProcessScanTask(currentList, 0, currentList.size(), totalSystemMemoryBytes, logicalProcessorCount, priorSnapshot);
+            ProcessScannerTask scanTask = new ProcessScannerTask(currentList, 0, currentList.size(), totalSystemMemoryBytes, logicalProcessorCount, priorSnapshot);
             scannedProcesses = scanPool.invoke(scanTask);
         }
 
-        assignRanks(scannedProcesses);
+        // Stamp each fresh model with the seconds elapsed since this PID was last scanned.
+        // updateProcesses() on the FX thread will add this delta to the live model's totalSeconds.
+        for (ProcessModel model : scannedProcesses.values()) {
+            Long lastMs = lastSeenTimestampMs.get(model.getPid());
+            if (lastMs != null)
+                model.totalSecondsProperty().set((nowMs - lastMs) / 1000);
+            lastSeenTimestampMs.put(model.getPid(), nowMs);
+        }
+        lastSeenTimestampMs.keySet().retainAll(scannedProcesses.keySet());
+
         return scannedProcesses;
-    }
-
-    /**
-     * Assigns RAM and CPU ranks to all processes (rank 1 = highest consumer).
-     * Runs single-threaded after the pool completes — safe to mutate JavaFX properties here.
-     */
-    private void assignRanks(ConcurrentHashMap<Integer, ProcessModel> processes) {
-        List<ProcessModel> byRamDescending = new ArrayList<>(processes.values());
-        byRamDescending.sort(Comparator.comparingDouble(ProcessModel::getRamUsagePercent).reversed());
-
-        for (int rank = 0; rank < byRamDescending.size(); rank++)
-            byRamDescending.get(rank).ramRankProperty().set(rank + 1);
-
-        List<ProcessModel> byCpuDescending = new ArrayList<>(processes.values());
-        byCpuDescending.sort(Comparator.comparingDouble(ProcessModel::getCpuUsagePercent).reversed());
-
-        for (int rank = 0; rank < byCpuDescending.size(); rank++)
-            byCpuDescending.get(rank).cpuRankProperty().set(rank + 1);
     }
 }

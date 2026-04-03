@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  * the callback onto the appropriate thread (e.g. Platform.runLater for UI).
  */
 @RequiredArgsConstructor
-public class ProcessScanRunnable implements Runnable {
+public class ProcessScannerRunnable implements Runnable {
 
     private final ProcessScannerService scannerService;
     private final Consumer<ConcurrentHashMap<Integer, ProcessModel>> onScanComplete;

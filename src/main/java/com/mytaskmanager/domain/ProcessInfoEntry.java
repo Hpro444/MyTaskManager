@@ -1,9 +1,12 @@
 package com.mytaskmanager.domain;
 
-public record ProcessInfoEntry(String originalName,
-                               String aliasName,
-                               Category category,
-                               boolean isTrackingFreezed,
-                               long totalTimeSeconds) {
-}
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+public record ProcessInfoEntry(
+        @JsonProperty("originalName") String originalName,
+        @JsonProperty("aliasName") String aliasName,
+        @JsonProperty("category") Category category,
+        @JsonProperty("isTrackingFrozen") boolean isTrackingFrozen,
+        @JsonProperty("totalTimeSeconds") long totalTimeSeconds
+) {
+}

@@ -21,7 +21,7 @@ import java.util.concurrent.RecursiveTask;
  * </p>
  */
 @RequiredArgsConstructor
-public class ProcessScanTask extends RecursiveTask<ConcurrentHashMap<Integer, ProcessModel>> {
+public class ProcessScannerTask extends RecursiveTask<ConcurrentHashMap<Integer, ProcessModel>> {
 
     private static final int LEAF_THRESHOLD = 10;
 
@@ -45,8 +45,8 @@ public class ProcessScanTask extends RecursiveTask<ConcurrentHashMap<Integer, Pr
             return processLeaf();
 
         int midIndex = startIndex + segmentSize / 2;
-        ProcessScanTask leftTask = new ProcessScanTask(osProcessSnapshot, startIndex, midIndex, totalSystemMemoryBytes, logicalProcessorCount, priorSnapshot);
-        ProcessScanTask rightTask = new ProcessScanTask(osProcessSnapshot, midIndex, endIndex, totalSystemMemoryBytes, logicalProcessorCount, priorSnapshot);
+        ProcessScannerTask leftTask = new ProcessScannerTask(osProcessSnapshot, startIndex, midIndex, totalSystemMemoryBytes, logicalProcessorCount, priorSnapshot);
+        ProcessScannerTask rightTask = new ProcessScannerTask(osProcessSnapshot, midIndex, endIndex, totalSystemMemoryBytes, logicalProcessorCount, priorSnapshot);
 
         leftTask.fork();
         ConcurrentHashMap<Integer, ProcessModel> rightResults = rightTask.compute();

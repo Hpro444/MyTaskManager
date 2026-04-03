@@ -44,9 +44,9 @@ public class CategoryView extends BorderPane {
         saveBtn.getStyleClass().add("button");
         loadBtn.getStyleClass().add("button");
         shutdownBtn.getStyleClass().addAll("button", "danger");
-        saveBtn.setOnAction(e -> showStub("Save"));
-        loadBtn.setOnAction(e -> showStub("Load"));
-        shutdownBtn.setOnAction(e -> javafx.application.Platform.exit());
+        saveBtn.setOnAction(e -> MainApplication.save());
+        loadBtn.setOnAction(e -> MainApplication.load());
+        shutdownBtn.setOnAction(e -> MainApplication.performShutdown());
 
         ToolBar toolbar = new ToolBar(saveBtn, loadBtn, new Separator(), shutdownBtn);
         toolbar.getStyleClass().add("tool-bar");

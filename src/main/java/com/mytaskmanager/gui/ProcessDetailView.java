@@ -1,5 +1,6 @@
 package com.mytaskmanager.gui;
 
+import com.mytaskmanager.domain.Category;
 import com.mytaskmanager.domain.ProcessModel;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
@@ -11,6 +12,7 @@ import javafx.scene.layout.*;
 public class ProcessDetailView extends BorderPane {
 
     private final ObservableList<ProcessModel> allProcesses;
+    private final ProcessModel selected;
 
     private final Label processNameLabel = new Label();
     private final Label totalTimeLabel = new Label();
@@ -22,6 +24,7 @@ public class ProcessDetailView extends BorderPane {
     private final TableView<ProcessModel> processTable;
 
     public ProcessDetailView(ProcessModel selected, ObservableList<ProcessModel> allProcesses) {
+        this.selected = selected;
         this.allProcesses = allProcesses;
         this.processTable = buildProcessTable(selected);
 
@@ -30,7 +33,6 @@ public class ProcessDetailView extends BorderPane {
 
         bindDetailPanel(selected);
     }
-
 
     private HBox buildHeader() {
         Button backBtn = new Button("← Back to Main Chart View");
@@ -46,9 +48,9 @@ public class ProcessDetailView extends BorderPane {
         saveBtn.getStyleClass().add("button");
         loadBtn.getStyleClass().add("button");
         shutdownBtn.getStyleClass().addAll("button", "danger");
-        saveBtn.setOnAction(e -> showStub("Save"));
-        loadBtn.setOnAction(e -> showStub("Load"));
-        shutdownBtn.setOnAction(e -> javafx.application.Platform.exit());
+        saveBtn.setOnAction(e -> MainApplication.save());
+        loadBtn.setOnAction(e -> MainApplication.load());
+        shutdownBtn.setOnAction(e -> MainApplication.performShutdown());
 
         ToolBar toolbar = new ToolBar(saveBtn, loadBtn, new Separator(), shutdownBtn);
         toolbar.getStyleClass().add("tool-bar");
@@ -115,7 +117,8 @@ public class ProcessDetailView extends BorderPane {
         HBox topActions = buildActionButtons();
         HBox bottomActions = buildActionButtons2();
 
-        VBox pane = new VBox(10, processNameLabel, totalTimeLabel, sep1, resourceHeader, ramRow, cpuRow, sep2, actionsHeader, topActions, bottomActions);
+        VBox pane = new VBox(10, processNameLabel, totalTimeLabel, sep1, resourceHeader,
+                ramRow, cpuRow, sep2, actionsHeader, topActions, bottomActions);
         pane.getStyleClass().addAll("card", "detail-panel");
         pane.setPrefWidth(520);
         return pane;
@@ -126,8 +129,18 @@ public class ProcessDetailView extends BorderPane {
         Button nameBtn = new Button("Change Name");
         killBtn.getStyleClass().addAll("action-button", "danger");
         nameBtn.getStyleClass().addAll("action-button", "neutral");
-        killBtn.setOnAction(e -> showStub("Kill Process"));
-        nameBtn.setOnAction(e -> showStub("Change Name"));
+
+        killBtn.setOnAction(e -> {
+            ProcessHandle.of(selected.getPid()).ifPresent(ProcessHandle::destroy);
+            MainApplication.showMain();
+        });
+
+        nameBtn.setOnAction(e -> {
+            TextInputDialog dialog = new TextInputDialog(selected.getAliasName());
+            dialog.setTitle("Set Alias");
+            dialog.setHeaderText("Enter alias for " + selected.getName());
+            dialog.showAndWait().ifPresent(alias -> selected.aliasNameProperty().set(alias));
+        });
 
         HBox row = new HBox(12, killBtn, nameBtn);
         row.setAlignment(Pos.CENTER_LEFT);
@@ -135,19 +148,30 @@ public class ProcessDetailView extends BorderPane {
     }
 
     private HBox buildActionButtons2() {
-        Button freezeBtn = new Button("Freeze Tracking");
+        Button freezeBtn = new Button(selected.isTrackingFreezed() ? "Unfreeze Tracking" : "Freeze Tracking");
         Button categoryBtn = new Button("Change Category");
         freezeBtn.getStyleClass().addAll("action-button", "warning");
         categoryBtn.getStyleClass().addAll("action-button", "neutral");
-        freezeBtn.setOnAction(e -> showStub("Freeze Tracking"));
-        categoryBtn.setOnAction(e -> showStub("Change Category"));
+
+        freezeBtn.setOnAction(e -> {
+            boolean nowFrozen = !selected.isTrackingFreezed();
+            selected.isTrackingFreezedProperty().set(nowFrozen);
+            freezeBtn.setText(nowFrozen ? "Unfreeze Tracking" : "Freeze Tracking");
+        });
+
+        categoryBtn.setOnAction(e -> {
+            ChoiceDialog<Category> dialog = new ChoiceDialog<>(selected.getCategory(), Category.values());
+            dialog.setTitle("Change Category");
+            dialog.setHeaderText("Category for " + selected.getName());
+            dialog.showAndWait().ifPresent(cat -> selected.categoryProperty().set(cat));
+        });
 
         HBox row = new HBox(12, freezeBtn, categoryBtn);
         row.setAlignment(Pos.CENTER_LEFT);
         return row;
     }
 
-    private TableView<ProcessModel> buildProcessTable(ProcessModel selected) {
+    private TableView<ProcessModel> buildProcessTable(ProcessModel initialSelected) {
         TableView<ProcessModel> table = new TableView<>();
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
@@ -156,7 +180,8 @@ public class ProcessDetailView extends BorderPane {
         nameCol.setPrefWidth(220);
 
         TableColumn<ProcessModel, String> catCol = new TableColumn<>("Category");
-        catCol.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(d.getValue().getCategoryDisplay()));
+        catCol.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(
+                d.getValue().getCategoryDisplay()));
         catCol.setPrefWidth(120);
 
         nameCol.setSortable(false);
@@ -168,7 +193,7 @@ public class ProcessDetailView extends BorderPane {
         table.getSortOrder().clear();
         table.setSortPolicy(tv -> false);
 
-        table.getSelectionModel().select(selected);
+        table.getSelectionModel().select(initialSelected);
 
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) bindDetailPanel(newVal);
@@ -178,25 +203,22 @@ public class ProcessDetailView extends BorderPane {
     }
 
     private void bindDetailPanel(ProcessModel p) {
-        processNameLabel.textProperty().bind(p.nameProperty());
-        totalTimeLabel.textProperty().bind(Bindings.createStringBinding(() -> "Total tracked time: " + p.getFormattedTime(), p.totalSecondsProperty()));
-        ramValueLabel.textProperty().bind(Bindings.createStringBinding(() -> String.format("RAM: %.1f%%", p.getRamUsagePercent()), p.ramUsagePercentProperty()));
-        ramRankLabel.textProperty().bind(Bindings.createStringBinding(() -> "  (" + ordinal(p.getRamRank()) + " on RAM usage)", p.ramRankProperty()));
-        cpuValueLabel.textProperty().bind(Bindings.createStringBinding(() -> String.format("CPU: %.1f%%", p.getCpuUsagePercent()), p.cpuUsagePercentProperty()));
-        cpuRankLabel.textProperty().bind(Bindings.createStringBinding(() -> "  (" + ordinal(p.getCpuRank()) + " on CPU usage)", p.cpuRankProperty()));
+        processNameLabel.textProperty().bind(p.aliasNameProperty());
+        totalTimeLabel.textProperty().bind(Bindings.createStringBinding(
+                () -> "Total tracked time: " + p.getFormattedTime(), p.totalSecondsProperty()));
+        ramValueLabel.textProperty().bind(Bindings.createStringBinding(
+                () -> String.format("RAM: %.1f%%", p.getRamUsagePercent()), p.ramUsagePercentProperty()));
+        ramRankLabel.textProperty().bind(Bindings.createStringBinding(
+                () -> "  (" + ordinal(p.getRamRank()) + " on RAM usage)", p.ramRankProperty()));
+        cpuValueLabel.textProperty().bind(Bindings.createStringBinding(
+                () -> String.format("CPU: %.1f%%", p.getCpuUsagePercent()), p.cpuUsagePercentProperty()));
+        cpuRankLabel.textProperty().bind(Bindings.createStringBinding(
+                () -> "  (" + ordinal(p.getCpuRank()) + " on CPU usage)", p.cpuRankProperty()));
     }
 
     private static String ordinal(int n) {
         String[] suffixes = {"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"};
         int mod100 = n % 100;
         return n + (mod100 >= 11 && mod100 <= 13 ? "th" : suffixes[n % 10]);
-    }
-
-    private void showStub(String feature) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Feature Stub");
-        alert.setHeaderText(feature);
-        alert.setContentText(feature + ": coming soon.");
-        alert.showAndWait();
     }
 }

@@ -1,0 +1,621 @@
+{
+  "processes" : [ {
+    "originalName" : "Twingate.Service",
+    "aliasName" : "Twingate.Service",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "NVDisplay.Container",
+    "aliasName" : "NVDisplay.Container",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 148
+  }, {
+    "originalName" : "cowork-svc",
+    "aliasName" : "cowork-svc",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "sunshine",
+    "aliasName" : "sunshine",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "logi_lamparray_service",
+    "aliasName" : "logi_lamparray_service",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "ShellHost",
+    "aliasName" : "ShellHost",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "Memory Compression",
+    "aliasName" : "Memory Compression",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "vmmem",
+    "aliasName" : "vmmem",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "fsnotifier",
+    "aliasName" : "fsnotifier",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "CPUMetricsServer",
+    "aliasName" : "CPUMetricsServer",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "cef_server",
+    "aliasName" : "cef_server",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 744
+  }, {
+    "originalName" : "smss",
+    "aliasName" : "smss",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "java",
+    "aliasName" : "java",
+    "category" : "FUN",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 744
+  }, {
+    "originalName" : "msedgewebview2",
+    "aliasName" : "msedgewebview2",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 20524
+  }, {
+    "originalName" : "powershell",
+    "aliasName" : "powershell",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "nvcontainer",
+    "aliasName" : "nvcontainer",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 744
+  }, {
+    "originalName" : "wallpaperservice32",
+    "aliasName" : "wallpaperservice32",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "RuntimeBroker",
+    "aliasName" : "RuntimeBroker",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 744
+  }, {
+    "originalName" : "idea64",
+    "aliasName" : "idea64",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "amdow",
+    "aliasName" : "amdow",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "SystemSettings",
+    "aliasName" : "SystemSettings",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "taskhostw",
+    "aliasName" : "taskhostw",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "winlogon",
+    "aliasName" : "winlogon",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "atiesrxx",
+    "aliasName" : "atiesrxx",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "explorer",
+    "aliasName" : "explorer",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "backgroundTaskHost",
+    "aliasName" : "backgroundTaskHost",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 72
+  }, {
+    "originalName" : "dwm",
+    "aliasName" : "dwm",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "OfficeClickToRun",
+    "aliasName" : "OfficeClickToRun",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "cmd",
+    "aliasName" : "cmd",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "StartMenuExperienceHost",
+    "aliasName" : "StartMenuExperienceHost",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "cncmd",
+    "aliasName" : "cncmd",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "csrss",
+    "aliasName" : "csrss",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 148
+  }, {
+    "originalName" : "AmdPpkgSvc",
+    "aliasName" : "AmdPpkgSvc",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "ctfmon",
+    "aliasName" : "ctfmon",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "MpDefenderCoreService",
+    "aliasName" : "MpDefenderCoreService",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "AggregatorHost",
+    "aliasName" : "AggregatorHost",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "svchost",
+    "aliasName" : "svchost",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 4689976
+  }, {
+    "originalName" : "AMDRSServ",
+    "aliasName" : "AMDRSServ",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "spoolsv",
+    "aliasName" : "spoolsv",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "services",
+    "aliasName" : "services",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "webwallpaper32",
+    "aliasName" : "webwallpaper32",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 1300
+  }, {
+    "originalName" : "UserOOBEBroker",
+    "aliasName" : "UserOOBEBroker",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "PowerToys.ColorPickerUI",
+    "aliasName" : "PowerToys.ColorPickerUI",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "SecurityHealthSystray",
+    "aliasName" : "SecurityHealthSystray",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "WidgetService",
+    "aliasName" : "WidgetService",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "wallpaper32",
+    "aliasName" : "wallpaper32",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "SecurityHealthService",
+    "aliasName" : "SecurityHealthService",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "TextInputHost",
+    "aliasName" : "TextInputHost",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "Twingate",
+    "aliasName" : "Twingate",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "wslservice",
+    "aliasName" : "wslservice",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "NgcIso",
+    "aliasName" : "NgcIso",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "PowerToys",
+    "aliasName" : "PowerToys",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "claude",
+    "aliasName" : "claude",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 8100
+  }, {
+    "originalName" : "ShellExperienceHost",
+    "aliasName" : "ShellExperienceHost",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "Widgets",
+    "aliasName" : "Widgets",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "PhoneExperienceHost",
+    "aliasName" : "PhoneExperienceHost",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "PowerToys.FancyZones",
+    "aliasName" : "PowerToys.FancyZones",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "conhost",
+    "aliasName" : "conhost",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 6084
+  }, {
+    "originalName" : "wininit",
+    "aliasName" : "wininit",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "spaceman",
+    "aliasName" : "spaceman",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "copilot-language-server",
+    "aliasName" : "copilot-language-server",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "CrossDeviceResume",
+    "aliasName" : "CrossDeviceResume",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "chrome",
+    "aliasName" : "chrome",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 73788
+  }, {
+    "originalName" : "vmms",
+    "aliasName" : "vmms",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "jetbrainsd",
+    "aliasName" : "jetbrainsd",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "AppActions",
+    "aliasName" : "AppActions",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "Lightshot",
+    "aliasName" : "Lightshot",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "fontdrvhost",
+    "aliasName" : "fontdrvhost",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 148
+  }, {
+    "originalName" : "sunshinesvc",
+    "aliasName" : "sunshinesvc",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "vmcompute",
+    "aliasName" : "vmcompute",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "dasHost",
+    "aliasName" : "dasHost",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "nvsphelper64",
+    "aliasName" : "nvsphelper64",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "RTUWPSrvcMain",
+    "aliasName" : "RTUWPSrvcMain",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "PowerToys.AlwaysOnTop",
+    "aliasName" : "PowerToys.AlwaysOnTop",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "PowerToys.CropAndLock",
+    "aliasName" : "PowerToys.CropAndLock",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "atieclxx",
+    "aliasName" : "atieclxx",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "LsaIso",
+    "aliasName" : "LsaIso",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "RadeonSoftware",
+    "aliasName" : "RadeonSoftware",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "lsass",
+    "aliasName" : "lsass",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "LockApp",
+    "aliasName" : "LockApp",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "PowerToys.Peek.UI",
+    "aliasName" : "PowerToys.Peek.UI",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "WmiPrvSE",
+    "aliasName" : "WmiPrvSE",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "remoting_host",
+    "aliasName" : "remoting_host",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 148
+  }, {
+    "originalName" : "NisSrv",
+    "aliasName" : "NisSrv",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "sihost",
+    "aliasName" : "sihost",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "WhatsApp.Root",
+    "aliasName" : "WhatsApp.Root",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "Todoist",
+    "aliasName" : "Todoist",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 3108
+  }, {
+    "originalName" : "System",
+    "aliasName" : "System",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "ApplicationFrameHost",
+    "aliasName" : "ApplicationFrameHost",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "Secure System",
+    "aliasName" : "Secure System",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "Discord",
+    "aliasName" : "Discord",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 2076
+  }, {
+    "originalName" : "SearchHost",
+    "aliasName" : "SearchHost",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "jetbrains-toolbox",
+    "aliasName" : "jetbrains-toolbox",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "AMDRSSrcExt",
+    "aliasName" : "AMDRSSrcExt",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "vmwp",
+    "aliasName" : "vmwp",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "MidiSrv",
+    "aliasName" : "MidiSrv",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "OpenConsole",
+    "aliasName" : "OpenConsole",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "NVIDIA Overlay",
+    "aliasName" : "NVIDIA Overlay",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 1300
+  }, {
+    "originalName" : "Registry",
+    "aliasName" : "Registry",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "PowerToys.PowerLauncher",
+    "aliasName" : "PowerToys.PowerLauncher",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "MsMpEng",
+    "aliasName" : "MsMpEng",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "amdfendrsr",
+    "aliasName" : "amdfendrsr",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  }, {
+    "originalName" : "SearchIndexer",
+    "aliasName" : "SearchIndexer",
+    "category" : "UNCATEGORIZED",
+    "isTrackingFrozen" : false,
+    "totalTimeSeconds" : 36
+  } ]
+}

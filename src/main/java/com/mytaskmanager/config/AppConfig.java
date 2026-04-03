@@ -2,6 +2,9 @@ package com.mytaskmanager.config;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -20,5 +23,25 @@ public class AppConfig {
 
     public long getMonitorIntervalSeconds() {
         return Long.parseLong(properties.getProperty("monitor.interval", "5"));
+    }
+
+    public String getMappingFilePath() {
+        return properties.getProperty("mapping.file", "process_info.json");
+    }
+
+    public long getSnapshotIntervalSeconds() {
+        return Long.parseLong(properties.getProperty("snapshot.interval", "60"));
+    }
+
+    public List<LocalTime> getSnapshotFixedTimes() {
+        List<LocalTime> times = new ArrayList<>();
+        int i = 1;
+        while (true) {
+            String val = properties.getProperty("snapshot.fixed_time_" + i);
+            if (val == null) break;
+            times.add(LocalTime.parse(val));
+            i++;
+        }
+        return times;
     }
 }

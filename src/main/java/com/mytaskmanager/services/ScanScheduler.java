@@ -30,6 +30,6 @@ public class ScanScheduler {
     }
 
     public void shutdown() {
-        scheduler.shutdownNow();
+        scheduler.shutdown();
     }
 }

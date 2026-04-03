@@ -6,10 +6,16 @@ module com.mytaskmanager {
     requires com.sun.jna.platform;
     requires org.slf4j.nop;
     requires static lombok;
+    requires com.fasterxml.jackson.annotation;
+    requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.module.paramnames;
 
     exports com.mytaskmanager;
     exports com.mytaskmanager.config;
     exports com.mytaskmanager.gui;
     exports com.mytaskmanager.services;
     exports com.mytaskmanager.domain;
+
+    opens com.mytaskmanager.utils to com.fasterxml.jackson.databind;
+    opens com.mytaskmanager.domain to com.fasterxml.jackson.databind;
 }
