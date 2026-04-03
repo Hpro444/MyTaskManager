@@ -27,6 +27,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MainApplication extends Application {
 
@@ -43,6 +46,7 @@ public class MainApplication extends Application {
     private static AnalyticsService analyticsService;
     private static SnapshotScheduler snapshotScheduler;
     private static WatcherService watcherService;
+    private static final AtomicBoolean shutdownStarted = new AtomicBoolean(false);
 
     @Override
     public void start(Stage stage) {
@@ -130,6 +134,8 @@ public class MainApplication extends Application {
      * Opens a FileChooser and saves the current mapping to a user-chosen JSON file.
      */
     public static void save() {
+        if (shutdownStarted.get()) return;
+
         FileChooser fc = new FileChooser();
         fc.setTitle("Save Mapping");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files", "*.json"));
@@ -143,6 +149,8 @@ public class MainApplication extends Application {
      * Opens a FileChooser and loads a previously saved mapping file.
      */
     public static void load() {
+        if (shutdownStarted.get()) return;
+
         FileChooser fc = new FileChooser();
         fc.setTitle("Load Mapping");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files", "*.json"));
@@ -162,17 +170,33 @@ public class MainApplication extends Application {
      * 3. Wait for the file write to complete before exiting.
      */
     public static void performShutdown() {
+        if (!shutdownStarted.compareAndSet(false, true)) {
+            return;
+        }
+
         scanScheduler.shutdown();
         analyticsScheduler.shutdown();
         snapshotScheduler.shutdown();
         watcherService.stop();
 
-        // Collect current state on the FX thread before handing off to file I/O
-        List<ProcessInfoEntry> entries = mainView.buildEntries();
-        fileIoScheduler.submit(() -> fileIoService.save(entries, config.getMappingFilePath()));
+        CountDownLatch fxDrainLatch = new CountDownLatch(1);
+        AtomicReference<List<ProcessInfoEntry>> entriesRef = new AtomicReference<>(List.of());
 
-        // Block on a background thread until all pending file I/O completes, then exit
+        // Queue this after any in-flight runLater UI updates, then capture a final FX-owned snapshot.
+        Platform.runLater(() -> {
+            entriesRef.set(mainView.buildEntries());
+            fxDrainLatch.countDown();
+        });
+
+        // Wait off the FX thread, then persist and exit.
         new Thread(() -> {
+            try {
+                fxDrainLatch.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            fileIoScheduler.submit(() -> fileIoService.save(entriesRef.get(), config.getMappingFilePath()));
             fileIoScheduler.shutdownAndAwait();
             Platform.exit();
         }, "shutdown-await").start();

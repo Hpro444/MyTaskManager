@@ -2,6 +2,7 @@ package com.mytaskmanager.services.fileIo;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -18,7 +19,11 @@ public class FileIoScheduler {
     });
 
     public void submit(Runnable task) {
-        executor.submit(new FileIoRunnable(task));
+        try {
+            executor.submit(new FileIoRunnable(task));
+        } catch (RejectedExecutionException ignored) {
+            // Safe no-op during shutdown races (e.g., duplicate UI actions while exiting).
+        }
     }
 
     /**
@@ -28,8 +33,12 @@ public class FileIoScheduler {
     public void shutdownAndAwait() {
         executor.shutdown();
         try {
-            executor.awaitTermination(10, TimeUnit.SECONDS);
+            boolean terminated = executor.awaitTermination(10, TimeUnit.SECONDS);
+            if (!terminated) {
+                executor.shutdownNow();
+            }
         } catch (InterruptedException e) {
+            executor.shutdownNow();
             Thread.currentThread().interrupt();
         }
     }

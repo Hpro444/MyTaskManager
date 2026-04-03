@@ -27,7 +27,11 @@ public class WatcherService {
         this.watchFilePath = Path.of(config.getMappingFilePath()).toAbsolutePath();
     }
 
-    public void start(WatcherRunnable runnable) throws IOException {
+    public synchronized void start(WatcherRunnable runnable) throws IOException {
+        if (watchThread != null && watchThread.isAlive()) {
+            return;
+        }
+
         Path dir = watchFilePath.getParent();
         watchService = FileSystems.getDefault().newWatchService();
         dir.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
@@ -55,8 +59,13 @@ public class WatcherService {
      * @throws IOException                 if the file cannot be read after a change event
      */
     public List<ProcessInfoEntry> awaitNextChange() throws InterruptedException, IOException {
+        WatchService service = watchService;
+        if (service == null) {
+            throw new IllegalStateException("WatcherService.start(...) must be called before awaitNextChange().");
+        }
+
         while (true) {
-            WatchKey key = watchService.take(); // blocks until an event arrives
+            WatchKey key = service.take(); // blocks until an event arrives
             List<ProcessInfoEntry> result = null;
 
             for (WatchEvent<?> event : key.pollEvents()) {
@@ -72,13 +81,19 @@ public class WatcherService {
         }
     }
 
-    public void stop() {
-        if (watchService != null) {
+    public synchronized void stop() {
+        WatchService localWatchService = watchService;
+        Thread localWatchThread = watchThread;
+        watchService = null;
+        watchThread = null;
+
+        if (localWatchService != null) {
             try {
-                watchService.close();
+                localWatchService.close();
             } catch (IOException ignored) {
             }
         }
-        if (watchThread != null) watchThread.interrupt();
+        if (localWatchThread != null) localWatchThread.interrupt();
     }
+
 }
