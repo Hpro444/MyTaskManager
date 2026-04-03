@@ -17,6 +17,10 @@ public class ProcessScannerRunnable implements Runnable {
     private final ProcessScannerService scannerService;
     private final Consumer<ConcurrentHashMap<Integer, ProcessModel>> onScanComplete;
 
+    /**
+     * Executes the scan and invokes the callback with results.
+     * Catches exceptions to prevent the scheduler from silently cancelling future scans.
+     */
     @Override
     public void run() {
         try {

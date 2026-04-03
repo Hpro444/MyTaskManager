@@ -17,6 +17,12 @@ public record ProcessSnapshot(
         double ramUsagePercent,
         boolean trackingFreezed
 ) {
+    /**
+     * Creates an immutable snapshot from a mutable ProcessModel.
+     *
+     * @param m the ProcessModel to snapshot
+     * @return a new ProcessSnapshot with all current values from the model
+     */
     public static ProcessSnapshot of(ProcessModel m) {
         return new ProcessSnapshot(
                 m.getPid(),
@@ -30,6 +36,11 @@ public record ProcessSnapshot(
         );
     }
 
+    /**
+     * Formats the total seconds into a human-readable time string.
+     *
+     * @return formatted time string (e.g., "2h 30m 45s")
+     */
     public String formattedTime() {
         long h = totalSeconds / 3600;
         long m = (totalSeconds % 3600) / 60;
@@ -37,6 +48,11 @@ public record ProcessSnapshot(
         return String.format("%dh %dm %ds", h, m, s);
     }
 
+    /**
+     * Returns a formatted string of RAM and CPU usage.
+     *
+     * @return string in format "X.X% / Y.Y%"
+     */
     public String ramAndCpu() {
         return String.format("%.1f%% / %.1f%%", ramUsagePercent, cpuUsagePercent);
     }

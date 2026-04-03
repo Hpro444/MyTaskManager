@@ -51,6 +51,9 @@ public class SnapshotService {
         checkPeriodicSnapshot(processes);
     }
 
+    /**
+     * Checks if any fixed-time snapshot triggers should fire.
+     */
     private void checkFixedTimeSnapshots(List<ProcessSnapshot> processes) {
         LocalTime now = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
         for (LocalTime fixed : fixedTimes) {
@@ -65,6 +68,9 @@ public class SnapshotService {
         }
     }
 
+    /**
+     * Checks if the periodic snapshot interval has elapsed.
+     */
     private void checkPeriodicSnapshot(List<ProcessSnapshot> processes) {
         long elapsed = Duration.between(lastPeriodicSnapshot, Instant.now()).getSeconds();
         if (elapsed >= snapshotIntervalSeconds) {

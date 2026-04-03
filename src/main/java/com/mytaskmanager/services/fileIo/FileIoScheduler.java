@@ -18,6 +18,12 @@ public class FileIoScheduler {
         return t;
     });
 
+    /**
+     * Submits a task to the file I/O executor.
+     * Silently ignores submissions during shutdown without throwing exceptions.
+     *
+     * @param task the task to execute
+     */
     public void submit(Runnable task) {
         try {
             executor.submit(new FileIoRunnable(task));

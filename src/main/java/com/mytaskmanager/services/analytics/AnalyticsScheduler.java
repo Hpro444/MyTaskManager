@@ -17,10 +17,19 @@ public class AnalyticsScheduler {
         return t;
     });
 
+    /**
+     * Starts the analytics loop with a 1-second interval.
+     * Ticks are non-overlapping: the next tick begins only after the previous one completes.
+     *
+     * @param task the Runnable to execute repeatedly
+     */
     public void start(Runnable task) {
         scheduler.scheduleWithFixedDelay(task, 0, 1, TimeUnit.SECONDS);
     }
 
+    /**
+     * Gracefully shuts down the analytics scheduler.
+     */
     public void shutdown() {
         scheduler.shutdown();
     }

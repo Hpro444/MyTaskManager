@@ -20,6 +20,10 @@ public class WatcherRunnable implements Runnable {
     private final WatcherService watcherService;
     private final Consumer<List<ProcessInfoEntry>> onFileChanged;
 
+    /**
+     * Runs the main watch loop, handling initial load and change detection.
+     * Catches exceptions gracefully to handle startup failures and mid-write events.
+     */
     @Override
     public void run() {
         try {

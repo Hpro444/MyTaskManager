@@ -11,6 +11,9 @@ public class FileIoRunnable implements Runnable {
 
     private final Runnable task;
 
+    /**
+     * Executes the wrapped task with exception handling.
+     */
     @Override
     public void run() {
         try {

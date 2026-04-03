@@ -21,6 +21,9 @@ public class AnalyticsService {
 
     private final AtomicReference<List<ProcessSnapshot>> snapshot = new AtomicReference<>(List.of());
 
+    public AnalyticsService() {
+    }
+
     /**
      * Called on the JavaFX Application Thread after every process scan update.
      * Converts each ProcessModel to an immutable ProcessSnapshot so background threads
@@ -35,6 +38,8 @@ public class AnalyticsService {
     /**
      * Returns the current process snapshot. Used by {@link AnalyticsRunnable}
      * to pass to other services that run alongside analytics each tick.
+     *
+     * @return the current immutable process snapshot
      */
     public List<ProcessSnapshot> getCurrentSnapshot() {
         return snapshot.get();
@@ -43,11 +48,19 @@ public class AnalyticsService {
     /**
      * Computes analytics for the current snapshot.
      * Called by {@link AnalyticsRunnable} on the analytics thread.
+     *
+     * @return analytics result containing time by category and top 10 processes
      */
     public AnalyticsResult tick() {
         return compute(snapshot.get());
     }
 
+    /**
+     * Computes analytics from the given snapshot.
+     *
+     * @param current the process snapshot to compute analytics for
+     * @return analytics result
+     */
     private AnalyticsResult compute(List<ProcessSnapshot> current) {
         // Deduplicate by name (take max time across instances), then sum per category
         Map<Category, Long> byCategory = current.stream()

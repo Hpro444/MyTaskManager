@@ -31,6 +31,15 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Main JavaFX Application class and orchestrator for all background services.
+ * <p>
+ * Initializes and wires all core services (scanning, analytics, snapshots, file I/O, watching),
+ * manages the UI views (main chart and category detail), and handles the graceful shutdown sequence.
+ * Provides static accessors for UI views to interact with services and perform actions like
+ * save, load, and view navigation.
+ * </p>
+ */
 public class MainApplication extends Application {
 
     private static Stage primaryStage;
@@ -77,7 +86,7 @@ public class MainApplication extends Application {
         SnapshotRunnable snapshotRunnable = new SnapshotRunnable(analyticsService::getCurrentSnapshot, snapshotService);
         snapshotScheduler = new SnapshotScheduler();
         snapshotScheduler.start(snapshotRunnable, config.getSnapshotSchedulerDelaySeconds());
- 
+
         watcherService = new WatcherService(config);
         WatcherRunnable watcherRunnable = new WatcherRunnable(watcherService, entries -> Platform.runLater(() -> mainView.applyMappingUpdates(entries)));
 
@@ -117,14 +126,27 @@ public class MainApplication extends Application {
         stage.show();
     }
 
+    /**
+     * Displays the specified parent node in the primary stage.
+     *
+     * @param view the Parent node to display
+     */
     public static void show(Parent view) {
         primaryStage.getScene().setRoot(view);
     }
 
+    /**
+     * Displays the main chart view.
+     */
     public static void showMain() {
         primaryStage.getScene().setRoot(mainView);
     }
 
+    /**
+     * Displays the category detail view for the specified category.
+     *
+     * @param category the category to display details for
+     */
     public static void showCategory(Category category) {
         categoryView.applyUpdate(category, analyticsService.getCurrentSnapshot());
         primaryStage.getScene().setRoot(categoryView);

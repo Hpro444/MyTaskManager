@@ -10,26 +10,46 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for {@link ProcessScannerService}.
+ * <p>
+ * Verifies that process scanning works correctly, including rank assignment,
+ * process name validation, and repeated scan behavior. Tests run against live
+ * system processes to ensure the integration with OSHI library functions properly.
+ * </p>
+ */
 class ProcessScannerServiceTest {
 
     private static ConcurrentHashMap<Integer, ProcessModel> scannedProcesses;
 
+    /**
+     * Performs an initial process scan before all tests.
+     */
     @BeforeAll
     static void runScan() {
         ProcessScannerService scanner = new ProcessScannerService();
         scannedProcesses = scanner.scanProcesses();
     }
 
+    /**
+     * Tests that scanProcesses returns a non-null result.
+     */
     @Test
     void scanProcesses_returnsNonNullList() {
         assertNotNull(scannedProcesses);
     }
 
+    /**
+     * Tests that at least one process is found on the system.
+     */
     @Test
     void scanProcesses_listIsNotEmpty() {
         assertFalse(scannedProcesses.isEmpty(), "Expected at least one running process on the system");
     }
 
+    /**
+     * Tests that all process names are non-blank.
+     */
     @Test
     void scanProcesses_allProcessNamesAreNonBlank() {
         for (ProcessModel process : scannedProcesses.values()) {
@@ -38,6 +58,9 @@ class ProcessScannerServiceTest {
         }
     }
 
+    /**
+     * Tests that RAM ranks are assigned to all processes.
+     */
     @Test
     void scanProcesses_ramRanksAreAssigned() {
         for (ProcessModel process : scannedProcesses.values()) {
@@ -46,6 +69,9 @@ class ProcessScannerServiceTest {
         }
     }
 
+    /**
+     * Tests that CPU ranks are assigned to all processes.
+     */
     @Test
     void scanProcesses_cpuRanksAreAssigned() {
         for (ProcessModel process : scannedProcesses.values()) {
@@ -54,6 +80,9 @@ class ProcessScannerServiceTest {
         }
     }
 
+    /**
+     * Tests that the process with highest RAM usage has rank 1.
+     */
     @Test
     void scanProcesses_topRamRankIsOne() {
         ProcessModel highestRamProcess = scannedProcesses.values().stream()
@@ -63,6 +92,9 @@ class ProcessScannerServiceTest {
                 "The process with the highest RAM usage must have ramRank == 1");
     }
 
+    /**
+     * Tests that the process with highest CPU usage has rank 1.
+     */
     @Test
     void scanProcesses_topCpuRankIsOne() {
         ProcessModel highestCpuProcess = scannedProcesses.values().stream()
@@ -72,6 +104,9 @@ class ProcessScannerServiceTest {
                 "The process with the highest CPU usage must have cpuRank == 1");
     }
 
+    /**
+     * Tests that the scanner can be called multiple times on the same instance.
+     */
     @Test
     void scanProcesses_canBeCalledMultipleTimes() {
         ProcessScannerService scanner = new ProcessScannerService();
@@ -81,6 +116,9 @@ class ProcessScannerServiceTest {
         assertNotNull(secondScan);
     }
 
+    /**
+     * Tests that all processes default to UNCATEGORIZED category.
+     */
     @Test
     void scanProcesses_allCategoriesAreUncategorized() {
         for (ProcessModel process : scannedProcesses.values()) {
@@ -89,6 +127,9 @@ class ProcessScannerServiceTest {
         }
     }
 
+    /**
+     * Tests that all processes start with zero total seconds.
+     */
     @Test
     void scanProcesses_allTotalSecondsAreZero() {
         for (ProcessModel process : scannedProcesses.values()) {

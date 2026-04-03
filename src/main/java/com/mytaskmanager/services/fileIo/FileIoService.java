@@ -16,6 +16,13 @@ import java.util.List;
  */
 public class FileIoService {
 
+    /**
+     * Saves process entries to a JSON file.
+     *
+     * @param entries the list of ProcessInfoEntry to save
+     * @param path    the file path to write to
+     * @throws UncheckedIOException if an I/O error occurs
+     */
     public void save(List<ProcessInfoEntry> entries, String path) {
         try {
             JsonProcessInfoWriter.writeAll(path, entries);
@@ -24,6 +31,13 @@ public class FileIoService {
         }
     }
 
+    /**
+     * Loads process entries from a JSON file.
+     *
+     * @param path the file path to read from
+     * @return list of ProcessInfoEntry loaded from the file
+     * @throws UncheckedIOException if an I/O error occurs
+     */
     public List<ProcessInfoEntry> load(String path) {
         try {
             return JsonProcessInfoReader.readAll(path);
@@ -32,6 +46,13 @@ public class FileIoService {
         }
     }
 
+    /**
+     * Writes a CSV snapshot of all processes to a directory.
+     *
+     * @param processes the list of ProcessSnapshot to write
+     * @param directory the directory to write the snapshot file to
+     * @throws UncheckedIOException if an I/O error occurs
+     */
     public void writeCsvSnapshot(List<ProcessSnapshot> processes, String directory) {
         try {
             CsvSnapshotWriter.write(processes, directory);

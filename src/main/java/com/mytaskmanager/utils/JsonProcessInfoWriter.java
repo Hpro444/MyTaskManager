@@ -11,6 +11,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Utility for serializing process entries to JSON files.
+ * <p>
+ * Persists user-configured process metadata (aliases, categories, freeze states, time) to
+ * process_info.json in a formatted structure for easy manual editing if needed.
+ * </p>
+ */
 public class JsonProcessInfoWriter {
 
     private static final ObjectMapper mapper = new ObjectMapper()
@@ -20,6 +27,10 @@ public class JsonProcessInfoWriter {
     /**
      * Writes all process entries to a file with the structure:
      * { "processes": [ { "originalName": "...", ... }, ... ] }
+     *
+     * @param filePath the path to write the JSON file to
+     * @param entries the list of ProcessInfoEntry to write
+     * @throws IOException if an I/O error occurs
      */
     public static void writeAll(String filePath, List<ProcessInfoEntry> entries) throws IOException {
         ObjectNode root = mapper.createObjectNode();

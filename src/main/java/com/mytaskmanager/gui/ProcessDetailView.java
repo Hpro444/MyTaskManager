@@ -9,6 +9,14 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
+/**
+ * Detail view for a single process instance.
+ * <p>
+ * Displays comprehensive metrics (CPU, RAM, total time, ranks) for a selected process and allows
+ * user interactions such as killing the process, changing its alias, freezing tracking, or changing
+ * its category. Also shows a live list of all running processes for quick navigation.
+ * </p>
+ */
 public class ProcessDetailView extends BorderPane {
 
     private final ObservableList<ProcessModel> allProcesses;
@@ -23,6 +31,12 @@ public class ProcessDetailView extends BorderPane {
 
     private final TableView<ProcessModel> processTable;
 
+    /**
+     * Constructs a detail view for a specific process.
+     *
+     * @param selected     the process to display details for
+     * @param allProcesses all processes for navigation
+     */
     public ProcessDetailView(ProcessModel selected, ObservableList<ProcessModel> allProcesses) {
         this.selected = selected;
         this.allProcesses = allProcesses;
@@ -34,6 +48,9 @@ public class ProcessDetailView extends BorderPane {
         bindDetailPanel(selected);
     }
 
+    /**
+     * Builds the header with navigation and action buttons.
+     */
     private HBox buildHeader() {
         Button backBtn = new Button("← Back to Main Chart View");
         backBtn.getStyleClass().add("back-button");
@@ -62,6 +79,9 @@ public class ProcessDetailView extends BorderPane {
         return header;
     }
 
+    /**
+     * Builds the center container with left process list and right details panel.
+     */
     private HBox buildCenter() {
         VBox leftPane = buildLeftPane();
         VBox rightPane = buildRightPane();
@@ -75,6 +95,9 @@ public class ProcessDetailView extends BorderPane {
         return center;
     }
 
+    /**
+     * Builds the left pane with the process list table.
+     */
     private VBox buildLeftPane() {
         Label title = new Label("Running Processes");
         title.getStyleClass().add("section-title");
@@ -88,6 +111,9 @@ public class ProcessDetailView extends BorderPane {
         return pane;
     }
 
+    /**
+     * Builds the right pane with detailed metrics and action buttons.
+     */
     private VBox buildRightPane() {
         processNameLabel.getStyleClass().add("detail-process-name");
         processNameLabel.setWrapText(true);
@@ -124,6 +150,9 @@ public class ProcessDetailView extends BorderPane {
         return pane;
     }
 
+    /**
+     * Builds the first row of action buttons (Kill Process, Change Alias).
+     */
     private HBox buildActionButtons() {
         Button killBtn = new Button("Kill Process");
         Button nameBtn = new Button("Change Alias");
@@ -140,9 +169,9 @@ public class ProcessDetailView extends BorderPane {
             dialog.setTitle("Set Alias");
             dialog.setHeaderText("Enter alias for " + selected.getAliasName());
             dialog.showAndWait().ifPresent(alias ->
-                allProcesses.stream()
-                    .filter(p -> p.getName().equals(selected.getName()))
-                    .forEach(p -> p.aliasNameProperty().set(alias)));
+                    allProcesses.stream()
+                            .filter(p -> p.getName().equals(selected.getName()))
+                            .forEach(p -> p.aliasNameProperty().set(alias)));
         });
 
         HBox row = new HBox(12, killBtn, nameBtn);
@@ -150,6 +179,9 @@ public class ProcessDetailView extends BorderPane {
         return row;
     }
 
+    /**
+     * Builds the second row of action buttons (Freeze Tracking, Change Category).
+     */
     private HBox buildActionButtons2() {
         Button freezeBtn = new Button(selected.isTrackingFreezed() ? "Unfreeze Tracking" : "Freeze Tracking");
         Button categoryBtn = new Button("Change Category");
@@ -159,8 +191,8 @@ public class ProcessDetailView extends BorderPane {
         freezeBtn.setOnAction(e -> {
             boolean nowFrozen = !selected.isTrackingFreezed();
             allProcesses.stream()
-                .filter(p -> p.getName().equals(selected.getName()))
-                .forEach(p -> p.isTrackingFreezedProperty().set(nowFrozen));
+                    .filter(p -> p.getName().equals(selected.getName()))
+                    .forEach(p -> p.isTrackingFreezedProperty().set(nowFrozen));
             freezeBtn.setText(nowFrozen ? "Unfreeze Tracking" : "Freeze Tracking");
         });
 
@@ -169,9 +201,9 @@ public class ProcessDetailView extends BorderPane {
             dialog.setTitle("Change Category");
             dialog.setHeaderText("Category for " + selected.getName());
             dialog.showAndWait().ifPresent(cat ->
-                allProcesses.stream()
-                    .filter(p -> p.getName().equals(selected.getName()))
-                    .forEach(p -> p.categoryProperty().set(cat)));
+                    allProcesses.stream()
+                            .filter(p -> p.getName().equals(selected.getName()))
+                            .forEach(p -> p.categoryProperty().set(cat)));
         });
 
         HBox row = new HBox(12, freezeBtn, categoryBtn);
@@ -179,6 +211,12 @@ public class ProcessDetailView extends BorderPane {
         return row;
     }
 
+    /**
+     * Builds the process table showing all running processes.
+     *
+     * @param initialSelected the process initially selected
+     * @return configured TableView
+     */
     private TableView<ProcessModel> buildProcessTable(ProcessModel initialSelected) {
         TableView<ProcessModel> table = new TableView<>();
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
@@ -210,6 +248,11 @@ public class ProcessDetailView extends BorderPane {
         return table;
     }
 
+    /**
+     * Binds the detail panel labels to the specified process's properties.
+     *
+     * @param p the process to bind to
+     */
     private void bindDetailPanel(ProcessModel p) {
         processNameLabel.textProperty().bind(p.aliasNameProperty());
         totalTimeLabel.textProperty().bind(Bindings.createStringBinding(
@@ -224,6 +267,12 @@ public class ProcessDetailView extends BorderPane {
                 () -> "  (" + ordinal(p.getCpuRank()) + " on CPU usage)", p.cpuRankProperty()));
     }
 
+    /**
+     * Converts an integer rank into an ordinal suffix (1st, 2nd, 3rd, etc.).
+     *
+     * @param n the rank number
+     * @return ordinal representation (e.g., "1st", "2nd", "3rd", "4th")
+     */
     private static String ordinal(int n) {
         String[] suffixes = {"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"};
         int mod100 = n % 100;

@@ -87,6 +87,13 @@ public class ProcessScannerService {
         assignRankWithTies(byCpu, ProcessModel::getCpuUsagePercent, false);
     }
 
+    /**
+     * Assigns ranks with support for tied values.
+     *
+     * @param ordered the ordered list of processes
+     * @param metric  the metric function to extract values
+     * @param ramRank true to assign RAM ranks, false for CPU ranks
+     */
     private static void assignRankWithTies(List<ProcessModel> ordered,
                                            ToDoubleFunction<ProcessModel> metric,
                                            boolean ramRank) {

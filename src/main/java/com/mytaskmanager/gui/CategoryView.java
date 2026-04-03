@@ -11,9 +11,19 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Detail view for a specific category, showing all processes in that category and top 10 by time.
+ * <p>
+ * Filters the full process snapshot by the selected category, displays statistics and a pie chart
+ * of the top 10 processes in that category. Updated on every analytics tick with the latest snapshot.
+ * </p>
+ */
 public class CategoryView extends BorderPane {
 
     private Category currentCategory;
@@ -44,6 +54,11 @@ public class CategoryView extends BorderPane {
         setBottom(buildFooter());
     }
 
+    /**
+     * Returns the currently displayed category.
+     *
+     * @return the current category, or null if not set
+     */
     public Category getCurrentCategory() {
         return currentCategory;
     }
@@ -84,6 +99,9 @@ public class CategoryView extends BorderPane {
         footerLabel.setText(category.displayName().toLowerCase() + " total time — " + formatSeconds(totalSeconds));
     }
 
+    /**
+     * Builds the header with back button and action buttons.
+     */
     private HBox buildHeader() {
         Button backBtn = new Button("← Back to Main Chart View");
         backBtn.getStyleClass().add("back-button");
@@ -112,6 +130,9 @@ public class CategoryView extends BorderPane {
         return header;
     }
 
+    /**
+     * Builds the center container with process list and pie chart.
+     */
     private HBox buildCenter() {
         VBox leftPane = buildLeftPane();
         VBox rightPane = buildRightPane();
@@ -125,6 +146,9 @@ public class CategoryView extends BorderPane {
         return center;
     }
 
+    /**
+     * Builds the left pane with the process list table.
+     */
     private VBox buildLeftPane() {
         Label title = new Label("Processes");
         title.getStyleClass().add("section-title");
@@ -139,6 +163,11 @@ public class CategoryView extends BorderPane {
         return pane;
     }
 
+    /**
+     * Builds the process table with Name, RAM/CPU, and Time columns.
+     *
+     * @return configured TableView
+     */
     private TableView<ProcessSnapshot> buildTable() {
         TableView<ProcessSnapshot> table = new TableView<>(tableItems);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
@@ -160,6 +189,9 @@ public class CategoryView extends BorderPane {
         return table;
     }
 
+    /**
+     * Builds the right pane with the top 10 pie chart.
+     */
     private VBox buildRightPane() {
         Label title = new Label("Top 10 Processes by Time Spent");
         title.getStyleClass().add("section-title");
@@ -173,6 +205,9 @@ public class CategoryView extends BorderPane {
         return pane;
     }
 
+    /**
+     * Builds the footer with total time information.
+     */
     private HBox buildFooter() {
         HBox footer = new HBox(footerLabel);
         footer.getStyleClass().add("footer-bar");
@@ -180,6 +215,12 @@ public class CategoryView extends BorderPane {
         return footer;
     }
 
+    /**
+     * Checks if the pie chart data has changed significantly.
+     *
+     * @param newTotals the new totals map
+     * @return true if proportions changed by >= 0.5%
+     */
     private boolean pieChanged(Map<String, Long> newTotals) {
         if (!newTotals.keySet().equals(lastPieTotals.keySet())) return true;
         long newTotal = newTotals.values().stream().mapToLong(Long::longValue).sum();
@@ -194,6 +235,12 @@ public class CategoryView extends BorderPane {
         return false;
     }
 
+    /**
+     * Formats seconds into a human-readable time string (e.g., "5h 30m").
+     *
+     * @param s total seconds
+     * @return formatted time string
+     */
     private static String formatSeconds(long s) {
         long h = s / 3600;
         long m = (s % 3600) / 60;

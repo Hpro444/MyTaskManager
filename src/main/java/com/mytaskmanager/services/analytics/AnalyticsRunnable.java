@@ -16,6 +16,10 @@ public class AnalyticsRunnable implements Runnable {
     private final AnalyticsService analyticsService;
     private final Consumer<AnalyticsResult> onResult;
 
+    /**
+     * Executes one analytics tick and invokes the callback with results.
+     * Catches exceptions to prevent the scheduler from silently cancelling future ticks.
+     */
     @Override
     public void run() {
         try {

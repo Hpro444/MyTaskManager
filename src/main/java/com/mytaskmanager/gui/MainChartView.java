@@ -19,6 +19,15 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+/**
+ * Main UI view displaying all running processes in a tree table and category time in a pie chart.
+ * <p>
+ * Manages the process list lifecycle: receives scans from ProcessScannerService, updates existing models
+ * in-place, detects PID reuse, and rebuilds the grouped tree structure. Provides entry points for analytics
+ * updates, mapping changes, and process list exports. Handles user interactions like row selection and
+ * category detail navigation.
+ * </p>
+ */
 public class MainChartView extends BorderPane {
 
     private final Map<Integer, ProcessModel> allProcesses = new HashMap<>();
@@ -302,6 +311,9 @@ public class MainChartView extends BorderPane {
         }
     }
 
+    /**
+     * Builds the top toolbar with Save, Load, and Shutdown buttons.
+     */
     private HBox buildToolBar() {
         Button saveBtn = new Button("Save");
         Button loadBtn = new Button("Load");
@@ -323,6 +335,9 @@ public class MainChartView extends BorderPane {
         return header;
     }
 
+    /**
+     * Builds the center container with left process list and right details panel.
+     */
     private HBox buildCenter() {
         VBox leftPane = buildLeftPane();
         VBox rightPane = buildRightPane();
@@ -336,6 +351,9 @@ public class MainChartView extends BorderPane {
         return center;
     }
 
+    /**
+     * Builds the left pane containing the process tree table.
+     */
     private VBox buildLeftPane() {
         Label title = new Label("Running Processes");
         title.getStyleClass().add("section-title");
@@ -349,6 +367,9 @@ public class MainChartView extends BorderPane {
         return pane;
     }
 
+    /**
+     * Builds the right pane containing the pie chart and statistics.
+     */
     private VBox buildRightPane() {
         VBox statsSection = buildStatsSection();
 
@@ -361,6 +382,9 @@ public class MainChartView extends BorderPane {
         return pane;
     }
 
+    /**
+     * Builds the process tree table with columns for name, category, CPU, and RAM.
+     */
     private TreeTableView<ProcessModel> buildProcessTable() {
         TreeTableView<ProcessModel> table = new TreeTableView<>(treeRoot);
         table.setShowRoot(false);
@@ -432,6 +456,9 @@ public class MainChartView extends BorderPane {
         return table;
     }
 
+    /**
+     * Builds the pie chart for time by category.
+     */
     private PieChart buildPieChart() {
         PieChart chart = new PieChart(FXCollections.observableArrayList());
         chart.setTitle("Time by Category");
@@ -441,6 +468,9 @@ public class MainChartView extends BorderPane {
         return chart;
     }
 
+    /**
+     * Builds the statistics section with category labels and detail buttons.
+     */
     private VBox buildStatsSection() {
         VBox section = new VBox(4);
         for (Category cat : Category.values())
@@ -448,6 +478,9 @@ public class MainChartView extends BorderPane {
         return section;
     }
 
+    /**
+     * Builds a single statistics row for a category.
+     */
     private HBox buildStatRow(Category category) {
         Label label = new Label(category.displayName() + " — 0h 0m");
         label.getStyleClass().add("stats-label");
@@ -466,6 +499,12 @@ public class MainChartView extends BorderPane {
         return row;
     }
 
+    /**
+     * Formats seconds into a human-readable time string (e.g., "5h 30m").
+     *
+     * @param s total seconds
+     * @return formatted time string
+     */
     private static String formatSeconds(long s) {
         long h = s / 3600;
         long m = (s % 3600) / 60;
@@ -473,3 +512,4 @@ public class MainChartView extends BorderPane {
         return String.format("%dh %dm", h, m);
     }
 }
+

@@ -1,3 +1,11 @@
+/**
+ * MyTaskManager module descriptor.
+ * <p>
+ * Declares all required modules (JavaFX, OSHI, Jackson, etc.) and exports the
+ * public API packages. Opens internal utility packages to Jackson for reflective
+ * deserialization of JSON records.
+ * </p>
+ */
 module com.mytaskmanager {
     requires javafx.controls;
     requires javafx.fxml;

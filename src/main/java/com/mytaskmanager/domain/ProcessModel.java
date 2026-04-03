@@ -1,9 +1,9 @@
 package com.mytaskmanager.domain;
 
 import javafx.beans.property.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.ToString;
-import lombok.AccessLevel;
 
 /**
  * Domain model representing an OS process with performance metrics.
@@ -55,31 +55,100 @@ public class ProcessModel {
     }
 
     // Property accessors for JavaFX binding
-    public StringProperty nameProperty() { return name; }
-    public ObjectProperty<Category> categoryProperty() { return category; }
-    public LongProperty totalSecondsProperty() { return totalSeconds; }
-    public DoubleProperty ramUsagePercentProperty() { return ramUsagePercent; }
-    public DoubleProperty cpuUsagePercentProperty() { return cpuUsagePercent; }
-    public IntegerProperty ramRankProperty() { return ramRank; }
-    public IntegerProperty cpuRankProperty() { return cpuRank; }
-    public IntegerProperty pidProperty() { return pid; }
-    public LongProperty startTimeProperty() { return startTime; }
-    public StringProperty aliasNameProperty() { return aliasName; }
-    public BooleanProperty isTrackingFreezedProperty() { return isTrackingFreezed; }
+    public StringProperty nameProperty() {
+        return name;
+    }
+
+    public ObjectProperty<Category> categoryProperty() {
+        return category;
+    }
+
+    public LongProperty totalSecondsProperty() {
+        return totalSeconds;
+    }
+
+    public DoubleProperty ramUsagePercentProperty() {
+        return ramUsagePercent;
+    }
+
+    public DoubleProperty cpuUsagePercentProperty() {
+        return cpuUsagePercent;
+    }
+
+    public IntegerProperty ramRankProperty() {
+        return ramRank;
+    }
+
+    public IntegerProperty cpuRankProperty() {
+        return cpuRank;
+    }
+
+    public IntegerProperty pidProperty() {
+        return pid;
+    }
+
+    public LongProperty startTimeProperty() {
+        return startTime;
+    }
+
+    public StringProperty aliasNameProperty() {
+        return aliasName;
+    }
+
+    public BooleanProperty isTrackingFreezedProperty() {
+        return isTrackingFreezed;
+    }
 
     // Value getters
-    public String getName() { return name.get(); }
-    public Category getCategory() { return category.get(); }
-    public long getTotalSeconds() { return totalSeconds.get(); }
-    public double getRamUsagePercent() { return ramUsagePercent.get(); }
-    public double getCpuUsagePercent() { return cpuUsagePercent.get(); }
-    public int getRamRank() { return ramRank.get(); }
-    public int getCpuRank() { return cpuRank.get(); }
-    public int getPid() { return pid.get(); }
-    public long getStartTime() { return startTime.get(); }
-    public String getAliasName() { return aliasName.get(); }
-    public boolean isTrackingFreezed() { return isTrackingFreezed.get(); }
+    public String getName() {
+        return name.get();
+    }
 
+    public Category getCategory() {
+        return category.get();
+    }
+
+    public long getTotalSeconds() {
+        return totalSeconds.get();
+    }
+
+    public double getRamUsagePercent() {
+        return ramUsagePercent.get();
+    }
+
+    public double getCpuUsagePercent() {
+        return cpuUsagePercent.get();
+    }
+
+    public int getRamRank() {
+        return ramRank.get();
+    }
+
+    public int getCpuRank() {
+        return cpuRank.get();
+    }
+
+    public int getPid() {
+        return pid.get();
+    }
+
+    public long getStartTime() {
+        return startTime.get();
+    }
+
+    public String getAliasName() {
+        return aliasName.get();
+    }
+
+    public boolean isTrackingFreezed() {
+        return isTrackingFreezed.get();
+    }
+
+    /**
+     * Formats the total tracked time into a human-readable string (e.g., "5h 30m 45s").
+     *
+     * @return formatted time string
+     */
     public String getFormattedTime() {
         long s = totalSeconds.get();
         long h = s / 3600;
@@ -88,10 +157,20 @@ public class ProcessModel {
         return String.format("%dh %dm %ds", h, m, sec);
     }
 
+    /**
+     * Returns a formatted string of RAM and CPU usage percentages.
+     *
+     * @return string in format "X.X% / Y.Y%"
+     */
     public String getRamAndCpu() {
         return String.format("%.1f%% / %.1f%%", ramUsagePercent.get(), cpuUsagePercent.get());
     }
 
+    /**
+     * Returns the display name of this process's category.
+     *
+     * @return category display name
+     */
     public String getCategoryDisplay() {
         return category.get().displayName();
     }

@@ -11,6 +11,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Utility for deserializing process entries from JSON files.
+ * <p>
+ * Handles loading user-configured process metadata from process_info.json,
+ * including aliases, categories, freeze state, and accumulated time. Gracefully
+ * handles missing files or unknown categories via Jackson defaults.
+ * </p>
+ */
 public class JsonProcessInfoReader {
 
     private static final ObjectMapper mapper = new ObjectMapper()
@@ -22,6 +30,10 @@ public class JsonProcessInfoReader {
     /**
      * Reads all process entries from a file with the structure:
      * { "processes": [ { "originalName": "...", ... }, ... ] }
+     *
+     * @param filePath the path to the JSON file
+     * @return list of ProcessInfoEntry, or empty list if file is missing
+     * @throws IOException if an I/O error occurs
      */
     public static List<ProcessInfoEntry> readAll(String filePath) throws IOException {
         JsonNode root = mapper.readTree(new File(filePath));

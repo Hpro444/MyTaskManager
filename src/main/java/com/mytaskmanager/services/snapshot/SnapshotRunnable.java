@@ -16,6 +16,9 @@ public class SnapshotRunnable implements Runnable {
     private final Supplier<List<ProcessSnapshot>> snapshotSupplier;
     private final SnapshotService snapshotService;
 
+    /**
+     * Executes the snapshot check and triggers writes if conditions are met.
+     */
     @Override
     public void run() {
         try {

@@ -8,8 +8,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for {@link FileIoScheduler}.
+ * <p>
+ * Verifies that the single-threaded file I/O executor submits and executes tasks,
+ * and that submissions after shutdown are safely ignored without throwing exceptions.
+ * </p>
+ */
 class FileIoSchedulerTest {
 
+    /**
+     * Tests that the scheduler executes submitted tasks.
+     */
     @Test
     void submit_runsTask() throws InterruptedException {
         FileIoScheduler scheduler = new FileIoScheduler();
@@ -21,6 +31,9 @@ class FileIoSchedulerTest {
         scheduler.shutdownAndAwait();
     }
 
+    /**
+     * Tests that submissions after shutdown are ignored gracefully.
+     */
     @Test
     void submit_afterShutdown_doesNotThrowAndDoesNotRunTask() {
         FileIoScheduler scheduler = new FileIoScheduler();

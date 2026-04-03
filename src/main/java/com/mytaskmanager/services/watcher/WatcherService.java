@@ -27,6 +27,12 @@ public class WatcherService {
         this.watchFilePath = Path.of(config.getMappingFilePath()).toAbsolutePath();
     }
 
+    /**
+     * Starts the watcher on a daemon thread. Safe to call multiple times (idempotent).
+     *
+     * @param runnable the WatcherRunnable to execute
+     * @throws IOException if the watch service cannot be created or registered
+     */
     public synchronized void start(WatcherRunnable runnable) throws IOException {
         if (watchThread != null && watchThread.isAlive()) {
             return;
@@ -81,6 +87,9 @@ public class WatcherService {
         }
     }
 
+    /**
+     * Stops the watcher thread and closes the watch service. Safe to call multiple times.
+     */
     public synchronized void stop() {
         WatchService localWatchService = watchService;
         Thread localWatchThread = watchThread;
