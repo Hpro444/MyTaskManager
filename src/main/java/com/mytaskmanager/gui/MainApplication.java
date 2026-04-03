@@ -1,6 +1,7 @@
 package com.mytaskmanager.gui;
 
 import com.mytaskmanager.config.AppConfig;
+import com.mytaskmanager.domain.Category;
 import com.mytaskmanager.domain.ProcessInfoEntry;
 import com.mytaskmanager.services.ScanScheduler;
 import com.mytaskmanager.services.analytics.AnalyticsRunnable;
@@ -8,6 +9,7 @@ import com.mytaskmanager.services.analytics.AnalyticsScheduler;
 import com.mytaskmanager.services.analytics.AnalyticsService;
 import com.mytaskmanager.services.fileIo.FileIoScheduler;
 import com.mytaskmanager.services.fileIo.FileIoService;
+import com.mytaskmanager.services.fileIo.SnapshotService;
 import com.mytaskmanager.services.scanner.ProcessScannerRunnable;
 import com.mytaskmanager.services.scanner.ProcessScannerService;
 import com.mytaskmanager.services.watcher.WatcherRunnable;
@@ -28,6 +30,7 @@ public class MainApplication extends Application {
 
     private static Stage primaryStage;
     private static MainChartView mainView;
+    private static CategoryView categoryView;
 
     // Services shared across all views via static accessors
     private static AppConfig config;
@@ -42,18 +45,30 @@ public class MainApplication extends Application {
     public void start(Stage stage) {
         primaryStage = stage;
 
+        // Suppress JavaFX 21 BSS bug: modena stores .chart-pie -fx-background-color as a String
+        // causing a harmless ClassCastException warning on every pie chart render.
+        java.util.logging.Logger.getLogger("javafx.scene.CssStyleHelper")
+                .setLevel(java.util.logging.Level.OFF);
+
         config = new AppConfig();
         fileIoService = new FileIoService();
         fileIoScheduler = new FileIoScheduler();
         ProcessScannerService scannerService = new ProcessScannerService();
-        analyticsService = new AnalyticsService(config, fileIoScheduler, fileIoService);
+        analyticsService = new AnalyticsService();
+        SnapshotService snapshotService = new SnapshotService(config, fileIoScheduler, fileIoService);
 
         mainView = new MainChartView();
         mainView.setAnalyticsService(analyticsService);
+        categoryView = new CategoryView();
 
         // Wire analytics results back to the UI on the FX thread
-        AnalyticsRunnable analyticsRunnable = new AnalyticsRunnable(analyticsService,
-                result -> Platform.runLater(() -> mainView.applyAnalytics(result)));
+        AnalyticsRunnable analyticsRunnable = new AnalyticsRunnable(analyticsService, snapshotService,
+                result -> Platform.runLater(() -> {
+                    mainView.applyAnalytics(result);
+                    Category cat = categoryView.getCurrentCategory();
+                    if (cat != null)
+                        categoryView.applyUpdate(cat, analyticsService.getCurrentSnapshot());
+                }));
         analyticsScheduler = new AnalyticsScheduler();
         analyticsScheduler.start(analyticsRunnable);
 
@@ -105,6 +120,11 @@ public class MainApplication extends Application {
         primaryStage.getScene().setRoot(mainView);
     }
 
+    public static void showCategory(Category category) {
+        categoryView.applyUpdate(category, analyticsService.getCurrentSnapshot());
+        primaryStage.getScene().setRoot(categoryView);
+    }
+
     /**
      * Opens a FileChooser and saves the current mapping to a user-chosen JSON file.
      */
@@ -129,6 +149,7 @@ public class MainApplication extends Application {
         if (file == null) return;
         fileIoScheduler.submit(() -> {
             List<ProcessInfoEntry> entries = fileIoService.load(file.getAbsolutePath());
+            fileIoService.save(entries, config.getMappingFilePath());
             Platform.runLater(() -> mainView.applyMappingUpdates(entries));
         });
     }

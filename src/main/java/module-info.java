@@ -9,6 +9,7 @@ module com.mytaskmanager {
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.module.paramnames;
+    requires java.logging;
 
     exports com.mytaskmanager;
     exports com.mytaskmanager.config;

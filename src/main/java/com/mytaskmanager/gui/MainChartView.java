@@ -453,8 +453,7 @@ public class MainChartView extends BorderPane {
 
         Button detailsBtn = new Button("Details");
         detailsBtn.getStyleClass().add("details-button");
-        detailsBtn.setOnAction(e -> MainApplication.show(
-                new CategoryView(category, new ArrayList<>(allProcesses.values()))));
+        detailsBtn.setOnAction(e -> MainApplication.showCategory(category));
 
         HBox row = new HBox(8, label, spacer, detailsBtn);
         row.getStyleClass().add("stats-row");

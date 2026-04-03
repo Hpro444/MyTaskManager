@@ -270,14 +270,14 @@
 
 /* Hardcoded slice colors matching Category.values() order: WORK, FUN, OTHER, UNCATEGORIZED.
    Using .default-colorN.chart-pie overrides modena's default-colorN rules. */
-.default-color0.chart-pie { -fx-pie-color: #4a6fa5; }
-.default-color1.chart-pie { -fx-pie-color: #e05252; }
-.default-color2.chart-pie { -fx-pie-color: #d4880a; }
-.default-color3.chart-pie { -fx-pie-color: #6b7a8d; }
-.default-color0.chart-legend-item-symbol { -fx-background-color: #4a6fa5; }
-.default-color1.chart-legend-item-symbol { -fx-background-color: #e05252; }
-.default-color2.chart-legend-item-symbol { -fx-background-color: #d4880a; }
-.default-color3.chart-legend-item-symbol { -fx-background-color: #6b7a8d; }
+/*.default-color0.chart-pie { -fx-pie-color: #4a6fa5; }*/
+/*.default-color1.chart-pie { -fx-pie-color: #e05252; }*/
+/*.default-color2.chart-pie { -fx-pie-color: #d4880a; }*/
+/*.default-color3.chart-pie { -fx-pie-color: #6b7a8d; }*/
+/*.default-color0.chart-legend-item-symbol { -fx-background-color: #4a6fa5; }*/
+/*.default-color1.chart-legend-item-symbol { -fx-background-color: #e05252; }*/
+/*.default-color2.chart-legend-item-symbol { -fx-background-color: #d4880a; }*/
+/*.default-color3.chart-legend-item-symbol { -fx-background-color: #6b7a8d; }*/
 
 /* Override the broken JavaFX 21 modena BSS rule for .chart-pie which tries to
    cast a String to Color — our programmatic -fx-pie-color takes care of colors. */

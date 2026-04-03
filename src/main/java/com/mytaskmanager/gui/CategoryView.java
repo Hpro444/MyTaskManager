@@ -4,36 +4,90 @@ import com.mytaskmanager.domain.Category;
 import com.mytaskmanager.domain.ProcessModel;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CategoryView extends BorderPane {
 
-    public CategoryView(Category category, List<ProcessModel> allProcesses) {
-        List<ProcessModel> filtered = allProcesses.stream().filter(p -> p.getCategory() == category).collect(Collectors.toList());
+    private Category currentCategory;
 
-        long totalSeconds = filtered.stream().mapToLong(ProcessModel::getTotalSeconds).sum();
+    private final Label titleLabel;
+    private final ObservableList<ProcessModel> tableItems = FXCollections.observableArrayList();
+    private final PieChart topChart;
+    private final Label footerLabel;
 
-        setTop(buildHeader(category));
-        setCenter(buildCenter(filtered));
-        setBottom(buildFooter(category, totalSeconds));
+    // Last top-10 snapshot delivered to the pie — key: aliasName, value: totalSeconds
+    private final Map<String, Long> lastPieTotals = new LinkedHashMap<>();
+
+    public CategoryView() {
+        titleLabel = new Label();
+        titleLabel.getStyleClass().add("view-title");
+
+        topChart = new PieChart(FXCollections.observableArrayList());
+        topChart.setTitle("Top 10 by Time");
+        topChart.setLabelsVisible(true);
+        topChart.setLegendVisible(false);
+        topChart.setPrefHeight(320);
+
+        footerLabel = new Label();
+        footerLabel.getStyleClass().add("footer-total");
+
+        setTop(buildHeader());
+        setCenter(buildCenter());
+        setBottom(buildFooter());
     }
 
+    public Category getCurrentCategory() {
+        return currentCategory;
+    }
 
-    private HBox buildHeader(Category category) {
+    /**
+     * Updates all UI components for the given category using the latest process snapshot.
+     * Safe to call on every analytics tick.
+     */
+    public void applyUpdate(Category category, List<ProcessModel> allProcesses) {
+        if (category != currentCategory) lastPieTotals.clear();
+        currentCategory = category;
+        titleLabel.setText(category.displayName() + " Category");
+
+        List<ProcessModel> filtered = allProcesses.stream()
+                .filter(p -> p.getCategory() == category)
+                .collect(Collectors.toList());
+
+        tableItems.setAll(filtered);
+
+        List<ProcessModel> top10 = filtered.stream()
+                .sorted(Comparator.comparingLong(ProcessModel::getTotalSeconds).reversed())
+                .limit(10)
+                .toList();
+        Map<String, Long> newPieTotals = new LinkedHashMap<>();
+        top10.forEach(p -> newPieTotals.put(p.getAliasName(), p.getTotalSeconds()));
+
+        if (pieChanged(newPieTotals)) {
+            lastPieTotals.clear();
+            lastPieTotals.putAll(newPieTotals);
+            List<PieChart.Data> data = top10.stream()
+                    .map(p -> new PieChart.Data(p.getAliasName(), p.getTotalSeconds()))
+                    .collect(Collectors.toList());
+            topChart.getData().setAll(data);
+            topChart.setTitle(data.isEmpty() ? "No data" : "Top 10 by Time");
+        }
+
+        long totalSeconds = filtered.stream().mapToLong(ProcessModel::getTotalSeconds).sum();
+        footerLabel.setText(category.displayName().toLowerCase() + " total time — " + formatSeconds(totalSeconds));
+    }
+
+    private HBox buildHeader() {
         Button backBtn = new Button("← Back to Main Chart View");
         backBtn.getStyleClass().add("back-button");
         backBtn.setOnAction(e -> MainApplication.showMain());
-
-        Label titleLabel = new Label(category.displayName() + " Category");
-        titleLabel.getStyleClass().add("view-title");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -58,10 +112,9 @@ public class CategoryView extends BorderPane {
         return header;
     }
 
-
-    private HBox buildCenter(List<ProcessModel> filtered) {
-        VBox leftPane = buildLeftPane(filtered);
-        VBox rightPane = buildRightPane(filtered);
+    private HBox buildCenter() {
+        VBox leftPane = buildLeftPane();
+        VBox rightPane = buildRightPane();
 
         HBox.setHgrow(leftPane, Priority.ALWAYS);
         HBox.setHgrow(rightPane, Priority.ALWAYS);
@@ -72,11 +125,11 @@ public class CategoryView extends BorderPane {
         return center;
     }
 
-    private VBox buildLeftPane(List<ProcessModel> filtered) {
+    private VBox buildLeftPane() {
         Label title = new Label("Processes");
         title.getStyleClass().add("section-title");
 
-        TableView<ProcessModel> table = buildTable(filtered);
+        TableView<ProcessModel> table = buildTable();
         VBox.setVgrow(table, Priority.ALWAYS);
 
         VBox pane = new VBox(10, title, table);
@@ -86,8 +139,8 @@ public class CategoryView extends BorderPane {
         return pane;
     }
 
-    private TableView<ProcessModel> buildTable(List<ProcessModel> filtered) {
-        TableView<ProcessModel> table = new TableView<>();
+    private TableView<ProcessModel> buildTable() {
+        TableView<ProcessModel> table = new TableView<>(tableItems);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
         TableColumn<ProcessModel, String> nameCol = new TableColumn<>("Name");
@@ -103,65 +156,47 @@ public class CategoryView extends BorderPane {
         timeCol.setPrefWidth(110);
 
         table.getColumns().addAll(nameCol, ramCpuCol, timeCol);
-        table.setItems(FXCollections.observableArrayList(filtered));
         table.setPlaceholder(new Label("No processes in this category"));
         return table;
     }
 
-    private VBox buildRightPane(List<ProcessModel> filtered) {
+    private VBox buildRightPane() {
         Label title = new Label("Top 10 Processes by Time Spent");
         title.getStyleClass().add("section-title");
 
-        PieChart chart = buildTopChart(filtered);
-        VBox.setVgrow(chart, Priority.ALWAYS);
+        VBox.setVgrow(topChart, Priority.ALWAYS);
 
-        VBox pane = new VBox(10, title, chart);
+        VBox pane = new VBox(10, title, topChart);
         pane.setPadding(new Insets(12));
         pane.getStyleClass().add("card");
         pane.setPrefWidth(520);
         return pane;
     }
 
-    private PieChart buildTopChart(List<ProcessModel> filtered) {
-        List<ProcessModel> top10 = filtered.stream().sorted(Comparator.comparingLong(ProcessModel::getTotalSeconds).reversed()).limit(10).toList();
-
-        List<PieChart.Data> data = top10.stream().map(p -> new PieChart.Data(p.getAliasName(), p.getTotalSeconds())).collect(Collectors.toList());
-
-        PieChart chart = new PieChart(FXCollections.observableArrayList(data));
-        chart.setTitle("Top 10 by Time");
-        chart.setLabelsVisible(true);
-        chart.setLegendVisible(false);
-        chart.setPrefHeight(320);
-
-        if (data.isEmpty())
-            chart.setTitle("No data");
-
-        return chart;
-    }
-
-    private HBox buildFooter(Category category, long totalSeconds) {
-        String timeStr = formatSeconds(totalSeconds);
-        Label label = new Label(category.displayName().toLowerCase() + " total time — " + timeStr);
-        label.getStyleClass().add("footer-total");
-
-        HBox footer = new HBox(label);
+    private HBox buildFooter() {
+        HBox footer = new HBox(footerLabel);
         footer.getStyleClass().add("footer-bar");
         footer.setAlignment(Pos.CENTER_LEFT);
         return footer;
     }
 
+    private boolean pieChanged(Map<String, Long> newTotals) {
+        if (!newTotals.keySet().equals(lastPieTotals.keySet())) return true;
+        long newTotal = newTotals.values().stream().mapToLong(Long::longValue).sum();
+        long oldTotal = lastPieTotals.values().stream().mapToLong(Long::longValue).sum();
+        if (newTotal == 0 && oldTotal == 0) return false;
+        if (newTotal == 0 || oldTotal == 0) return true;
+        for (Map.Entry<String, Long> e : newTotals.entrySet()) {
+            double newPct = 100.0 * e.getValue() / newTotal;
+            double oldPct = 100.0 * lastPieTotals.getOrDefault(e.getKey(), 0L) / oldTotal;
+            if (Math.abs(newPct - oldPct) >= 0.5) return true;
+        }
+        return false;
+    }
+
     private static String formatSeconds(long s) {
         long h = s / 3600;
         long m = (s % 3600) / 60;
-        long sec = s % 60;
-        return String.format("%dh %dm %ds", h, m, sec);
-    }
-
-    private void showStub(String feature) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Feature Stub");
-        alert.setHeaderText(feature);
-        alert.setContentText(feature + ": coming soon.");
-        alert.showAndWait();
+        return String.format("%dh %dm", h, m);
     }
 }

@@ -158,7 +158,9 @@ public class ProcessDetailView extends BorderPane {
 
         freezeBtn.setOnAction(e -> {
             boolean nowFrozen = !selected.isTrackingFreezed();
-            selected.isTrackingFreezedProperty().set(nowFrozen);
+            allProcesses.stream()
+                .filter(p -> p.getName().equals(selected.getName()))
+                .forEach(p -> p.isTrackingFreezedProperty().set(nowFrozen));
             freezeBtn.setText(nowFrozen ? "Unfreeze Tracking" : "Freeze Tracking");
         });
 
