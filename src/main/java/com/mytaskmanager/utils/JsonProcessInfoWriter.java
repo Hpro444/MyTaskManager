@@ -29,7 +29,7 @@ public class JsonProcessInfoWriter {
             ObjectNode node = mapper.createObjectNode();
             node.put("originalName", e.originalName());
             node.put("aliasName", e.aliasName());
-            node.put("category", e.category().name());
+            node.put("category", e.category().displayName());
             node.put("isTrackingFrozen", e.isTrackingFrozen());
             node.put("totalTimeSeconds", e.totalTimeSeconds());
             processes.add(node);

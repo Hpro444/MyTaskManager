@@ -2,14 +2,16 @@ package com.mytaskmanager.gui;
 
 import com.mytaskmanager.config.AppConfig;
 import com.mytaskmanager.domain.ProcessInfoEntry;
-import com.mytaskmanager.services.AnalyticsService;
-import com.mytaskmanager.services.FileIoScheduler;
-import com.mytaskmanager.services.FileIoService;
 import com.mytaskmanager.services.ScanScheduler;
-import com.mytaskmanager.services.WatcherRunnable;
-import com.mytaskmanager.services.WatcherService;
+import com.mytaskmanager.services.analytics.AnalyticsRunnable;
+import com.mytaskmanager.services.analytics.AnalyticsScheduler;
+import com.mytaskmanager.services.analytics.AnalyticsService;
+import com.mytaskmanager.services.fileIo.FileIoScheduler;
+import com.mytaskmanager.services.fileIo.FileIoService;
 import com.mytaskmanager.services.scanner.ProcessScannerRunnable;
 import com.mytaskmanager.services.scanner.ProcessScannerService;
+import com.mytaskmanager.services.watcher.WatcherRunnable;
+import com.mytaskmanager.services.watcher.WatcherService;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;
@@ -32,6 +34,7 @@ public class MainApplication extends Application {
     private static FileIoService fileIoService;
     private static FileIoScheduler fileIoScheduler;
     private static ScanScheduler scanScheduler;
+    private static AnalyticsScheduler analyticsScheduler;
     private static AnalyticsService analyticsService;
     private static WatcherService watcherService;
 
@@ -49,7 +52,10 @@ public class MainApplication extends Application {
         mainView.setAnalyticsService(analyticsService);
 
         // Wire analytics results back to the UI on the FX thread
-        analyticsService.start(result -> Platform.runLater(() -> mainView.applyAnalytics(result)));
+        AnalyticsRunnable analyticsRunnable = new AnalyticsRunnable(analyticsService,
+                result -> Platform.runLater(() -> mainView.applyAnalytics(result)));
+        analyticsScheduler = new AnalyticsScheduler();
+        analyticsScheduler.start(analyticsRunnable);
 
         watcherService = new WatcherService(config);
         WatcherRunnable watcherRunnable = new WatcherRunnable(watcherService,
@@ -99,7 +105,9 @@ public class MainApplication extends Application {
         primaryStage.getScene().setRoot(mainView);
     }
 
-    /** Opens a FileChooser and saves the current mapping to a user-chosen JSON file. */
+    /**
+     * Opens a FileChooser and saves the current mapping to a user-chosen JSON file.
+     */
     public static void save() {
         FileChooser fc = new FileChooser();
         fc.setTitle("Save Mapping");
@@ -110,7 +118,9 @@ public class MainApplication extends Application {
         fileIoScheduler.submit(() -> fileIoService.save(entries, file.getAbsolutePath()));
     }
 
-    /** Opens a FileChooser and loads a previously saved mapping file. */
+    /**
+     * Opens a FileChooser and loads a previously saved mapping file.
+     */
     public static void load() {
         FileChooser fc = new FileChooser();
         fc.setTitle("Load Mapping");
@@ -131,7 +141,7 @@ public class MainApplication extends Application {
      */
     public static void performShutdown() {
         scanScheduler.shutdown();
-        analyticsService.shutdown();
+        analyticsScheduler.shutdown();
         watcherService.stop();
 
         // Collect current state on the FX thread before handing off to file I/O

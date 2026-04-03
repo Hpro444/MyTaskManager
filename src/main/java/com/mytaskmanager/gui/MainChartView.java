@@ -1,7 +1,10 @@
 package com.mytaskmanager.gui;
 
-import com.mytaskmanager.domain.*;
-import com.mytaskmanager.services.AnalyticsService;
+import com.mytaskmanager.domain.AnalyticsResult;
+import com.mytaskmanager.domain.Category;
+import com.mytaskmanager.domain.ProcessInfoEntry;
+import com.mytaskmanager.domain.ProcessModel;
+import com.mytaskmanager.services.analytics.AnalyticsService;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -39,7 +42,9 @@ public class MainChartView extends BorderPane {
         setCenter(buildCenter());
     }
 
-    /** Called by MainApplication after construction to wire in services. */
+    /**
+     * Called by MainApplication after construction to wire in services.
+     */
     public void setAnalyticsService(AnalyticsService analyticsService) {
         this.analyticsService = analyticsService;
     }
@@ -121,18 +126,18 @@ public class MainChartView extends BorderPane {
             lastPieTotals.clear();
             lastPieTotals.putAll(totals);
 
-            List<PieChart.Data> data = new ArrayList<>();
+            // Always add every category in enum order so CSS data-index colors are stable
+            List<PieChart.Data> slices = new ArrayList<>();
             for (Category cat : Category.values()) {
-                long seconds = totals.getOrDefault(cat, 0L);
-                if (seconds > 0) data.add(new PieChart.Data(cat.displayName(), seconds));
+                slices.add(new PieChart.Data(cat.displayName(), totals.getOrDefault(cat, 0L)));
             }
-            pieChart.getData().setAll(data);
+            pieChart.getData().setAll(slices);
+        }
 
-            for (Category cat : Category.values()) {
-                Label label = statLabels.get(cat);
-                if (label != null)
-                    label.setText(cat.displayName() + " — " + formatSeconds(totals.getOrDefault(cat, 0L)));
-            }
+        for (Category cat : Category.values()) {
+            Label label = statLabels.get(cat);
+            if (label != null)
+                label.setText(cat.displayName() + " — " + formatSeconds(totals.getOrDefault(cat, 0L)));
         }
     }
 
@@ -160,7 +165,7 @@ public class MainChartView extends BorderPane {
 
         return byName.entrySet().stream().map(e -> {
             ProcessModel rep = e.getValue().getFirst();
-            long totalSecs = e.getValue().stream().mapToLong(ProcessModel::getTotalSeconds).sum();
+            long totalSecs = e.getValue().stream().mapToLong(ProcessModel::getTotalSeconds).max().orElse(0L);
             return new ProcessInfoEntry(rep.getName(), rep.getAliasName(),
                     rep.getCategory(), rep.isTrackingFreezed(), totalSecs);
         }).collect(Collectors.toList());
@@ -371,7 +376,7 @@ public class MainChartView extends BorderPane {
         });
 
         TreeTableColumn<ProcessModel, String> nameCol = new TreeTableColumn<>("Process");
-        nameCol.setCellValueFactory(d -> d.getValue().getValue().nameProperty());
+        nameCol.setCellValueFactory(d -> d.getValue().getValue().aliasNameProperty());
         nameCol.setPrefWidth(200);
         nameCol.setSortable(false);
 
@@ -439,7 +444,7 @@ public class MainChartView extends BorderPane {
     }
 
     private HBox buildStatRow(Category category) {
-        Label label = new Label(category.displayName() + " — 0h 0m 0s");
+        Label label = new Label(category.displayName() + " — 0h 0m");
         label.getStyleClass().add("stats-label");
         statLabels.put(category, label);
 
@@ -461,6 +466,6 @@ public class MainChartView extends BorderPane {
         long h = s / 3600;
         long m = (s % 3600) / 60;
         long sec = s % 60;
-        return String.format("%dh %dm %ds", h, m, sec);
+        return String.format("%dh %dm", h, m);
     }
 }

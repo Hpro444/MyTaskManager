@@ -29,7 +29,9 @@ public class CsvSnapshotWriter {
     public static void write(List<ProcessModel> processes, String directory) throws IOException {
         Instant now = Instant.now();
         String filename = "snapshot_" + FILE_TS.format(now) + ".csv";
-        File file = new File(directory, filename);
+        File dir = new File(directory);
+        if (!dir.exists()) dir.mkdirs();
+        File file = new File(dir, filename);
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
             bw.write("timestamp,pid,process_name,cpu_usage,ram_usage,category,alias_name");

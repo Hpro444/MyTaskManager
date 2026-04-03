@@ -1,4 +1,4 @@
-package com.mytaskmanager.services;
+package com.mytaskmanager.services.watcher;
 
 import com.mytaskmanager.config.AppConfig;
 import com.mytaskmanager.domain.ProcessInfoEntry;
@@ -50,9 +50,9 @@ public class WatcherService {
      * Skips events for other files in the same directory and loops back to wait.
      * Must be called from a background thread — never the JavaFX Application Thread.
      *
-     * @throws InterruptedException      if the thread is interrupted while waiting
+     * @throws InterruptedException        if the thread is interrupted while waiting
      * @throws ClosedWatchServiceException if {@link #stop()} closed the service
-     * @throws IOException               if the file cannot be read after a change event
+     * @throws IOException                 if the file cannot be read after a change event
      */
     public List<ProcessInfoEntry> awaitNextChange() throws InterruptedException, IOException {
         while (true) {
@@ -74,7 +74,10 @@ public class WatcherService {
 
     public void stop() {
         if (watchService != null) {
-            try { watchService.close(); } catch (IOException ignored) {}
+            try {
+                watchService.close();
+            } catch (IOException ignored) {
+            }
         }
         if (watchThread != null) watchThread.interrupt();
     }

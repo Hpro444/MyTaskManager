@@ -91,7 +91,7 @@ public class CategoryView extends BorderPane {
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
         TableColumn<ProcessModel, String> nameCol = new TableColumn<>("Name");
-        nameCol.setCellValueFactory(d -> d.getValue().nameProperty());
+        nameCol.setCellValueFactory(d -> d.getValue().aliasNameProperty());
         nameCol.setPrefWidth(180);
 
         TableColumn<ProcessModel, String> ramCpuCol = new TableColumn<>("RAM / CPU");
@@ -125,7 +125,7 @@ public class CategoryView extends BorderPane {
     private PieChart buildTopChart(List<ProcessModel> filtered) {
         List<ProcessModel> top10 = filtered.stream().sorted(Comparator.comparingLong(ProcessModel::getTotalSeconds).reversed()).limit(10).toList();
 
-        List<PieChart.Data> data = top10.stream().map(p -> new PieChart.Data(p.getName(), p.getTotalSeconds())).collect(Collectors.toList());
+        List<PieChart.Data> data = top10.stream().map(p -> new PieChart.Data(p.getAliasName(), p.getTotalSeconds())).collect(Collectors.toList());
 
         PieChart chart = new PieChart(FXCollections.observableArrayList(data));
         chart.setTitle("Top 10 by Time");

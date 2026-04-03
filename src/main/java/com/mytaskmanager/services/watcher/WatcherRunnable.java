@@ -1,4 +1,4 @@
-package com.mytaskmanager.services;
+package com.mytaskmanager.services.watcher;
 
 import com.mytaskmanager.domain.ProcessInfoEntry;
 import lombok.RequiredArgsConstructor;

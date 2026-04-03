@@ -18,4 +18,7 @@ module com.mytaskmanager {
 
     opens com.mytaskmanager.utils to com.fasterxml.jackson.databind;
     opens com.mytaskmanager.domain to com.fasterxml.jackson.databind;
+    exports com.mytaskmanager.services.watcher;
+    exports com.mytaskmanager.services.fileIo;
+    exports com.mytaskmanager.services.analytics;
 }

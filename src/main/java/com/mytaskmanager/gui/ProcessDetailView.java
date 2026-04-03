@@ -126,7 +126,7 @@ public class ProcessDetailView extends BorderPane {
 
     private HBox buildActionButtons() {
         Button killBtn = new Button("Kill Process");
-        Button nameBtn = new Button("Change Name");
+        Button nameBtn = new Button("Change Alias");
         killBtn.getStyleClass().addAll("action-button", "danger");
         nameBtn.getStyleClass().addAll("action-button", "neutral");
 
@@ -138,8 +138,11 @@ public class ProcessDetailView extends BorderPane {
         nameBtn.setOnAction(e -> {
             TextInputDialog dialog = new TextInputDialog(selected.getAliasName());
             dialog.setTitle("Set Alias");
-            dialog.setHeaderText("Enter alias for " + selected.getName());
-            dialog.showAndWait().ifPresent(alias -> selected.aliasNameProperty().set(alias));
+            dialog.setHeaderText("Enter alias for " + selected.getAliasName());
+            dialog.showAndWait().ifPresent(alias ->
+                allProcesses.stream()
+                    .filter(p -> p.getName().equals(selected.getName()))
+                    .forEach(p -> p.aliasNameProperty().set(alias)));
         });
 
         HBox row = new HBox(12, killBtn, nameBtn);
@@ -163,7 +166,10 @@ public class ProcessDetailView extends BorderPane {
             ChoiceDialog<Category> dialog = new ChoiceDialog<>(selected.getCategory(), Category.values());
             dialog.setTitle("Change Category");
             dialog.setHeaderText("Category for " + selected.getName());
-            dialog.showAndWait().ifPresent(cat -> selected.categoryProperty().set(cat));
+            dialog.showAndWait().ifPresent(cat ->
+                allProcesses.stream()
+                    .filter(p -> p.getName().equals(selected.getName()))
+                    .forEach(p -> p.categoryProperty().set(cat)));
         });
 
         HBox row = new HBox(12, freezeBtn, categoryBtn);
@@ -176,7 +182,7 @@ public class ProcessDetailView extends BorderPane {
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
         TableColumn<ProcessModel, String> nameCol = new TableColumn<>("Process");
-        nameCol.setCellValueFactory(d -> d.getValue().nameProperty());
+        nameCol.setCellValueFactory(d -> d.getValue().aliasNameProperty());
         nameCol.setPrefWidth(220);
 
         TableColumn<ProcessModel, String> catCol = new TableColumn<>("Category");

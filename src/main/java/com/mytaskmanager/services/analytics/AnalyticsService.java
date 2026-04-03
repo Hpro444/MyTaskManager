@@ -1,23 +1,23 @@
-package com.mytaskmanager.services;
+package com.mytaskmanager.services.analytics;
 
 import com.mytaskmanager.config.AppConfig;
 import com.mytaskmanager.domain.AnalyticsResult;
 import com.mytaskmanager.domain.Category;
 import com.mytaskmanager.domain.ProcessModel;
+import com.mytaskmanager.services.fileIo.FileIoScheduler;
+import com.mytaskmanager.services.fileIo.FileIoService;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
- * Background analytics engine.
- * Runs on a dedicated daemon thread every second.
+ * Pure analytics logic — no scheduling or threading.
  * <p>
  * Responsibilities:
  * <ul>
@@ -27,23 +27,17 @@ import java.util.stream.Collectors;
  * </ul>
  * <p>
  * Thread safety: the process list is published from the FX thread via {@link #publishSnapshot}
- * using an {@link AtomicReference}. The analytics thread reads it lock-free.
+ * using an {@link AtomicReference}. The analytics thread reads it lock-free via {@link #tick()}.
  */
 public class AnalyticsService {
 
     private final AtomicReference<List<ProcessModel>> snapshot = new AtomicReference<>(List.of());
 
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
-        Thread t = new Thread(r, "analytics-thread");
-        t.setDaemon(true);
-        return t;
-    });
-
     private final long snapshotIntervalSeconds;
     private final List<LocalTime> fixedTimes;
     private final FileIoScheduler fileIoScheduler;
     private final FileIoService fileIoService;
-    private final String snapshotDirectory = ".";
+    private final String snapshotDirectory = "snapshot";
 
     private volatile Instant lastPeriodicSnapshot = Instant.now();
 
@@ -66,24 +60,14 @@ public class AnalyticsService {
     }
 
     /**
-     * Starts the analytics loop. Fires every second.
-     *
-     * @param onResult callback invoked with computed analytics; caller wraps in Platform.runLater
+     * Performs one analytics tick: checks snapshot triggers and computes the current result.
+     * Called by {@link AnalyticsRunnable} on the analytics thread.
      */
-    public void start(Consumer<AnalyticsResult> onResult) {
-        scheduler.scheduleWithFixedDelay(() -> {
-            List<ProcessModel> current = snapshot.get();
-
-            checkFixedTimeSnapshots(current);
-            checkPeriodicSnapshot(current);
-
-            AnalyticsResult result = compute(current);
-            onResult.accept(result);
-        }, 0, 1, TimeUnit.SECONDS);
-    }
-
-    public void shutdown() {
-        scheduler.shutdown();
+    public AnalyticsResult tick() {
+        List<ProcessModel> current = snapshot.get();
+        checkFixedTimeSnapshots(current);
+        checkPeriodicSnapshot(current);
+        return compute(current);
     }
 
     private void checkFixedTimeSnapshots(List<ProcessModel> current) {
@@ -109,8 +93,15 @@ public class AnalyticsService {
     }
 
     private AnalyticsResult compute(List<ProcessModel> current) {
+        // Deduplicate by name (take max time across instances), then sum per category
         Map<Category, Long> byCategory = current.stream()
                 .filter(m -> !m.isTrackingFreezed())
+                .collect(Collectors.groupingBy(
+                        ProcessModel::getName,
+                        Collectors.maxBy(Comparator.comparingLong(ProcessModel::getTotalSeconds))))
+                .values().stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.groupingBy(
                         ProcessModel::getCategory,
                         Collectors.summingLong(ProcessModel::getTotalSeconds)));
