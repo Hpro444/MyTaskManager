@@ -22,7 +22,6 @@ module com.mytaskmanager {
     exports com.mytaskmanager;
     exports com.mytaskmanager.config;
     exports com.mytaskmanager.gui;
-    exports com.mytaskmanager.services;
     exports com.mytaskmanager.domain;
 
     opens com.mytaskmanager.utils to com.fasterxml.jackson.databind;
@@ -31,4 +30,5 @@ module com.mytaskmanager {
     exports com.mytaskmanager.services.fileIo;
     exports com.mytaskmanager.services.analytics;
     exports com.mytaskmanager.services.snapshot;
+    exports com.mytaskmanager.services.scanner;
 }

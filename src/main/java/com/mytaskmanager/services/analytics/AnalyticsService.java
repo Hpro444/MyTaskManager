@@ -30,9 +30,7 @@ public class AnalyticsService {
      * never touch JavaFX property objects.
      */
     public void publishSnapshot(Collection<ProcessModel> processes) {
-        snapshot.set(processes.stream()
-                .map(ProcessSnapshot::of)
-                .collect(Collectors.toUnmodifiableList()));
+        snapshot.set(processes.stream().map(ProcessSnapshot::of).toList());
     }
 
     /**

@@ -75,10 +75,7 @@ public class ProcessScannerTask extends RecursiveTask<ConcurrentHashMap<Integer,
             ProcessMetrics metrics = extractMetrics(proc);
 
             if (metrics != null) {
-                results.put(metrics.getPid(), new ProcessModel(
-                        metrics.getName(), Category.UNCATEGORIZED, 0L,
-                        metrics.getRamPercent(), metrics.getCpuPercent(), 0, 0,
-                        metrics.getPid(), metrics.getStartTime()));
+                results.put(metrics.pid(), new ProcessModel(metrics.name(), Category.UNCATEGORIZED, 0L, metrics.ramPercent(), metrics.cpuPercent(), 0, 0, metrics.pid(), metrics.startTime()));
             }
         }
 

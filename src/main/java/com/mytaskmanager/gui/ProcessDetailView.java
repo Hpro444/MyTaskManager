@@ -168,10 +168,7 @@ public class ProcessDetailView extends BorderPane {
             TextInputDialog dialog = new TextInputDialog(selected.getAliasName());
             dialog.setTitle("Set Alias");
             dialog.setHeaderText("Enter alias for " + selected.getAliasName());
-            dialog.showAndWait().ifPresent(alias ->
-                    allProcesses.stream()
-                            .filter(p -> p.getName().equals(selected.getName()))
-                            .forEach(p -> p.aliasNameProperty().set(alias)));
+            dialog.showAndWait().ifPresent(alias -> allProcesses.stream().filter(p -> p.getName().equals(selected.getName())).forEach(p -> p.aliasNameProperty().set(alias)));
         });
 
         HBox row = new HBox(12, killBtn, nameBtn);
@@ -190,9 +187,7 @@ public class ProcessDetailView extends BorderPane {
 
         freezeBtn.setOnAction(e -> {
             boolean nowFrozen = !selected.isTrackingFreezed();
-            allProcesses.stream()
-                    .filter(p -> p.getName().equals(selected.getName()))
-                    .forEach(p -> p.isTrackingFreezedProperty().set(nowFrozen));
+            allProcesses.stream().filter(p -> p.getName().equals(selected.getName())).forEach(p -> p.isTrackingFreezedProperty().set(nowFrozen));
             freezeBtn.setText(nowFrozen ? "Unfreeze Tracking" : "Freeze Tracking");
         });
 
@@ -200,10 +195,7 @@ public class ProcessDetailView extends BorderPane {
             ChoiceDialog<Category> dialog = new ChoiceDialog<>(selected.getCategory(), Category.values());
             dialog.setTitle("Change Category");
             dialog.setHeaderText("Category for " + selected.getName());
-            dialog.showAndWait().ifPresent(cat ->
-                    allProcesses.stream()
-                            .filter(p -> p.getName().equals(selected.getName()))
-                            .forEach(p -> p.categoryProperty().set(cat)));
+            dialog.showAndWait().ifPresent(cat -> allProcesses.stream().filter(p -> p.getName().equals(selected.getName())).forEach(p -> p.categoryProperty().set(cat)));
         });
 
         HBox row = new HBox(12, freezeBtn, categoryBtn);
@@ -255,16 +247,11 @@ public class ProcessDetailView extends BorderPane {
      */
     private void bindDetailPanel(ProcessModel p) {
         processNameLabel.textProperty().bind(p.aliasNameProperty());
-        totalTimeLabel.textProperty().bind(Bindings.createStringBinding(
-                () -> "Total tracked time: " + p.getFormattedTime(), p.totalSecondsProperty()));
-        ramValueLabel.textProperty().bind(Bindings.createStringBinding(
-                () -> String.format("RAM: %.1f%%", p.getRamUsagePercent()), p.ramUsagePercentProperty()));
-        ramRankLabel.textProperty().bind(Bindings.createStringBinding(
-                () -> "  (" + ordinal(p.getRamRank()) + " on RAM usage)", p.ramRankProperty()));
-        cpuValueLabel.textProperty().bind(Bindings.createStringBinding(
-                () -> String.format("CPU: %.1f%%", p.getCpuUsagePercent()), p.cpuUsagePercentProperty()));
-        cpuRankLabel.textProperty().bind(Bindings.createStringBinding(
-                () -> "  (" + ordinal(p.getCpuRank()) + " on CPU usage)", p.cpuRankProperty()));
+        totalTimeLabel.textProperty().bind(Bindings.createStringBinding(() -> "Total tracked time: " + p.getFormattedTime(), p.totalSecondsProperty()));
+        ramValueLabel.textProperty().bind(Bindings.createStringBinding(() -> String.format("RAM: %.1f%%", p.getRamUsagePercent()), p.ramUsagePercentProperty()));
+        ramRankLabel.textProperty().bind(Bindings.createStringBinding(() -> "  (" + ordinal(p.getRamRank()) + " on RAM usage)", p.ramRankProperty()));
+        cpuValueLabel.textProperty().bind(Bindings.createStringBinding(() -> String.format("CPU: %.1f%%", p.getCpuUsagePercent()), p.cpuUsagePercentProperty()));
+        cpuRankLabel.textProperty().bind(Bindings.createStringBinding(() -> "  (" + ordinal(p.getCpuRank()) + " on CPU usage)", p.cpuRankProperty()));
     }
 
     /**

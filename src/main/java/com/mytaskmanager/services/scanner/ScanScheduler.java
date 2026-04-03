@@ -1,4 +1,4 @@
-package com.mytaskmanager.services;
+package com.mytaskmanager.services.scanner;
 
 import com.mytaskmanager.config.AppConfig;
 

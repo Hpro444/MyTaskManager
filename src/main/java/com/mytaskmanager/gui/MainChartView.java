@@ -170,8 +170,7 @@ public class MainChartView extends BorderPane {
      * Must be called on the FX thread (reads allProcesses).
      */
     List<ProcessInfoEntry> buildEntries() {
-        Map<String, List<ProcessModel>> byName = allProcesses.values().stream()
-                .collect(Collectors.groupingBy(ProcessModel::getName));
+        Map<String, List<ProcessModel>> byName = allProcesses.values().stream().collect(Collectors.groupingBy(ProcessModel::getName));
 
         return byName.entrySet().stream().map(e -> {
             ProcessModel rep = e.getValue().getFirst();
@@ -182,9 +181,7 @@ public class MainChartView extends BorderPane {
     }
 
     private void updatePieChartAndStats() {
-        Map<Category, Long> totals = allProcesses.values().stream()
-                .collect(Collectors.groupingBy(ProcessModel::getCategory,
-                        Collectors.summingLong(ProcessModel::getTotalSeconds)));
+        Map<Category, Long> totals = allProcesses.values().stream().collect(Collectors.groupingBy(ProcessModel::getCategory, Collectors.summingLong(ProcessModel::getTotalSeconds)));
 
         List<PieChart.Data> data = new ArrayList<>();
         for (Category cat : Category.values()) {
@@ -204,15 +201,11 @@ public class MainChartView extends BorderPane {
      * Assigns RAM and CPU ranks to allProcesses. Must run on the FX Application Thread.
      */
     private void assignRanks() {
-        List<ProcessModel> byRam = allProcesses.values().stream()
-                .filter(p -> !p.isTrackingFreezed())
-                .collect(Collectors.toList());
+        List<ProcessModel> byRam = allProcesses.values().stream().filter(p -> !p.isTrackingFreezed()).collect(Collectors.toList());
         byRam.sort(Comparator.comparingDouble(ProcessModel::getRamUsagePercent).reversed());
         for (int i = 0; i < byRam.size(); i++) byRam.get(i).ramRankProperty().set(i + 1);
 
-        List<ProcessModel> byCpu = allProcesses.values().stream()
-                .filter(p -> !p.isTrackingFreezed())
-                .collect(Collectors.toList());
+        List<ProcessModel> byCpu = allProcesses.values().stream().filter(p -> !p.isTrackingFreezed()).collect(Collectors.toList());
         byCpu.sort(Comparator.comparingDouble(ProcessModel::getCpuUsagePercent).reversed());
         for (int i = 0; i < byCpu.size(); i++) byCpu.get(i).cpuRankProperty().set(i + 1);
     }
@@ -235,13 +228,9 @@ public class MainChartView extends BorderPane {
             }
         }
 
-        Set<String> expanded = treeRoot.getChildren().stream()
-                .filter(TreeItem::isExpanded)
-                .map(item -> item.getValue().getName())
-                .collect(Collectors.toSet());
+        Set<String> expanded = treeRoot.getChildren().stream().filter(TreeItem::isExpanded).map(item -> item.getValue().getName()).collect(Collectors.toSet());
 
-        Map<String, List<ProcessModel>> byName = allProcesses.values().stream()
-                .collect(Collectors.groupingBy(ProcessModel::getName));
+        Map<String, List<ProcessModel>> byName = allProcesses.values().stream().collect(Collectors.groupingBy(ProcessModel::getName));
 
         List<TreeItem<ProcessModel>> groupItems = new ArrayList<>();
 
@@ -264,16 +253,13 @@ public class MainChartView extends BorderPane {
                 groupItem = new TreeItem<>(aggregate);
                 groupItem.setExpanded(expanded.contains(name));
 
-                instances.stream()
-                        .sorted(Comparator.comparingDouble(ProcessModel::getCpuUsagePercent).reversed())
-                        .forEach(inst -> groupItem.getChildren().add(new TreeItem<>(inst)));
+                instances.stream().sorted(Comparator.comparingDouble(ProcessModel::getCpuUsagePercent).reversed()).forEach(inst -> groupItem.getChildren().add(new TreeItem<>(inst)));
             }
 
             groupItems.add(groupItem);
         }
 
-        groupItems.sort(Comparator.comparingDouble(
-                (TreeItem<ProcessModel> item) -> item.getValue().getCpuUsagePercent()).reversed());
+        groupItems.sort(Comparator.comparingDouble((TreeItem<ProcessModel> item) -> item.getValue().getCpuUsagePercent()).reversed());
 
         treeRoot.getChildren().setAll(groupItems);
 
@@ -298,8 +284,7 @@ public class MainChartView extends BorderPane {
                     if (restored != null) break;
                 }
 
-                if (previousGroupName != null && groupModel.getPid() == -1
-                        && previousGroupName.equals(groupModel.getName())) {
+                if (previousGroupName != null && groupModel.getPid() == -1 && previousGroupName.equals(groupModel.getName())) {
                     restored = group;
                     break;
                 }
@@ -421,11 +406,7 @@ public class MainChartView extends BorderPane {
                 return new javafx.beans.property.SimpleStringProperty(model.getCategoryDisplay());
             }
 
-            Set<Category> childCategories = item.getChildren().stream()
-                    .map(TreeItem::getValue)
-                    .filter(Objects::nonNull)
-                    .map(ProcessModel::getCategory)
-                    .collect(Collectors.toSet());
+            Set<Category> childCategories = item.getChildren().stream().map(TreeItem::getValue).filter(Objects::nonNull).map(ProcessModel::getCategory).collect(Collectors.toSet());
 
             if (childCategories.isEmpty()) {
                 return new javafx.beans.property.SimpleStringProperty(Category.UNCATEGORIZED.displayName());
@@ -439,9 +420,7 @@ public class MainChartView extends BorderPane {
         catCol.setSortable(false);
 
         TreeTableColumn<ProcessModel, String> cpuCol = new TreeTableColumn<>("CPU %");
-        cpuCol.setCellValueFactory(d -> Bindings.createStringBinding(
-                () -> String.format("%.1f%%", d.getValue().getValue().getCpuUsagePercent()),
-                d.getValue().getValue().cpuUsagePercentProperty()));
+        cpuCol.setCellValueFactory(d -> Bindings.createStringBinding(() -> String.format("%.1f%%", d.getValue().getValue().getCpuUsagePercent()), d.getValue().getValue().cpuUsagePercentProperty()));
         cpuCol.setPrefWidth(70);
         cpuCol.setSortable(false);
 

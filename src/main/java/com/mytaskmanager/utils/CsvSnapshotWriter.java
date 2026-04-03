@@ -51,14 +51,7 @@ public class CsvSnapshotWriter {
 
             String ts = ROW_TS.format(now);
             for (ProcessSnapshot p : processes) {
-                bw.write(String.format("%s,%d,%s,%.2f,%.2f,%s,%s",
-                        ts,
-                        p.pid(),
-                        escapeCsv(p.name()),
-                        p.cpuUsagePercent(),
-                        p.ramUsagePercent(),
-                        p.category().name(),
-                        escapeCsv(p.aliasName())));
+                bw.write(String.format("%s,%d,%s,%.2f,%.2f,%s,%s", ts, p.pid(), escapeCsv(p.name()), p.cpuUsagePercent(), p.ramUsagePercent(), p.category().name(), escapeCsv(p.aliasName())));
                 bw.newLine();
             }
         }

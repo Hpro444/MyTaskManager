@@ -20,16 +20,14 @@ import java.util.List;
  */
 public class JsonProcessInfoWriter {
 
-    private static final ObjectMapper mapper = new ObjectMapper()
-            .registerModule(new ParameterNamesModule())
-            .enable(SerializationFeature.INDENT_OUTPUT);
+    private static final ObjectMapper mapper = new ObjectMapper().registerModule(new ParameterNamesModule()).enable(SerializationFeature.INDENT_OUTPUT);
 
     /**
      * Writes all process entries to a file with the structure:
      * { "processes": [ { "originalName": "...", ... }, ... ] }
      *
      * @param filePath the path to write the JSON file to
-     * @param entries the list of ProcessInfoEntry to write
+     * @param entries  the list of ProcessInfoEntry to write
      * @throws IOException if an I/O error occurs
      */
     public static void writeAll(String filePath, List<ProcessInfoEntry> entries) throws IOException {

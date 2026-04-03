@@ -72,25 +72,18 @@ public class CategoryView extends BorderPane {
         currentCategory = category;
         titleLabel.setText(category.displayName() + " Category");
 
-        List<ProcessSnapshot> filtered = allProcesses.stream()
-                .filter(p -> p.category() == category)
-                .collect(Collectors.toList());
+        List<ProcessSnapshot> filtered = allProcesses.stream().filter(p -> p.category() == category).collect(Collectors.toList());
 
         tableItems.setAll(filtered);
 
-        List<ProcessSnapshot> top10 = filtered.stream()
-                .sorted(Comparator.comparingLong(ProcessSnapshot::totalSeconds).reversed())
-                .limit(10)
-                .toList();
+        List<ProcessSnapshot> top10 = filtered.stream().sorted(Comparator.comparingLong(ProcessSnapshot::totalSeconds).reversed()).limit(10).toList();
         Map<String, Long> newPieTotals = new LinkedHashMap<>();
         top10.forEach(p -> newPieTotals.put(p.aliasName(), p.totalSeconds()));
 
         if (pieChanged(newPieTotals)) {
             lastPieTotals.clear();
             lastPieTotals.putAll(newPieTotals);
-            List<PieChart.Data> data = top10.stream()
-                    .map(p -> new PieChart.Data(p.aliasName(), p.totalSeconds()))
-                    .collect(Collectors.toList());
+            List<PieChart.Data> data = top10.stream().map(p -> new PieChart.Data(p.aliasName(), p.totalSeconds())).collect(Collectors.toList());
             topChart.getData().setAll(data);
             topChart.setTitle(data.isEmpty() ? "No data" : "Top 10 by Time");
         }
